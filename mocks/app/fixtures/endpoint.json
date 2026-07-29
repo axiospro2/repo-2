@@ -1,0 +1,58 @@
+{
+  "data": [
+    {
+      "codigo": 2097,
+      "nome": "Análise Anual 2024",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 1,
+        "descricao": "Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "50746577000115",
+      "conglomerado": "50746577000115",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 15000000.00
+        }
+      ],
+      "atualizacao": "2024-06-15T14:30:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "page": 1,
+  "size": 100,
+  "totalElements": 1,
+  "totalPages": 1
+}

@@ -1,0 +1,25 @@
+{
+  "limiteVariacaoPercentual": 30,
+  "gateDivergenciaAtivo": false,
+  "faixas": [
+    {
+      "id": 1,
+      "descricao": "Faixa A - Até R$ 1.000",
+      "valor_minimo": 0,
+      "valor_maximo": 1000
+    },
+    {
+      "id": 2,
+      "descricao": "Faixa B - R$ 1.001 até R$ 5.000",
+      "valor_minimo": 1000.01,
+      "valor_maximo": 5000
+    },
+    {
+      "id": 3,
+      "descricao": "R$ 5.001 até R$ 10.000",
+      "valor_minimo": 5000.01,
+      "valor_maximo": 10000
+    }
+  ],
+  "moedas": ["BRL"]
+}

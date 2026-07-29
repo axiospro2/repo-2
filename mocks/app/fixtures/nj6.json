@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "nome_grupo_economico": "COSAN S A",
+      "codigo_tipo_grupo_economico": "E",
+      "data_hora_atualizacao": "2026-07-03T10:37:28",
+      "numero_funcional_atualizacao": "987350376",
+      "texto_justificativa_atualizacao": "Sem Justificativa",
+      "cabeca_grupo": {
+        "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+        "codigo_tipo_pessoa": "J",
+        "indicador_estrangeiro": 0,
+        "documento_raiz": "050746577"
+      },
+      "subgrupos": [
+        {
+          "nome_subgrupo": "OUTROS",
+          "codigo_grupo_cliente_atacado": 0,
+          "cabeca_subgrupo": {
+            "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+            "codigo_tipo_pessoa": "J",
+            "indicador_estrangeiro": 0,
+            "documento_raiz": "050746577"
+          },
+          "participantes": [
+            {
+              "pessoa": {
+                "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+                "codigo_tipo_pessoa": "J",
+                "indicador_estrangeiro": 0,
+                "documento_raiz": "050746577"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

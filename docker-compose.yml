@@ -1,0 +1,21 @@
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8010:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+
+  dynamodb-init:
+    build: ./mocks/db
+    depends_on:
+      - dynamodb-local
+    environment:
+      DYNAMODB_ENDPOINT: http://dynamodb-local:8000
+      DYNAMODB_TABLE: tbcv4163_fatm_cogl_subg
+      AWS_DEFAULT_REGION: us-east-1
+    restart: "no"
+
+  mock-api:
+    build: ./mocks
+    ports:
+      - "8080:8080"
