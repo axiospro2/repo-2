@@ -1,0 +1,45 @@
+version: 0.2
+
+env:
+  variables:
+    # TODO: trocar pela URL real da API de Faturamento em DEV.
+    AMBIENTE: "dev"
+    BASE_URL: "https://dev.exemplo.itau.com.br"
+    DOCUMENTO_TESTE: "050746577"
+  secrets-manager:
+    # TODO: trocar pelo ARN real do secret de credenciais M2M de DEV (Secrets Manager).
+    # Formato do value: "<secret-id-ou-arn>:<json-key>".
+    CLIENT_ID: "arn:aws:secretsmanager:sa-east-1:000000000000:secret:taac/dev/oauth-XXXXXX:client_id"
+    CLIENT_SECRET: "arn:aws:secretsmanager:sa-east-1:000000000000:secret:taac/dev/oauth-XXXXXX:client_secret"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.13
+    commands:
+      - pip install -r app/requirements-tests.txt
+
+  pre_build:
+    commands:
+      - echo "Rodando testes unitarios..."
+      - cd app && python -m pytest tests/ -v --tb=short --junit-xml=tests/junit-results.xml && cd ..
+
+  build:
+    commands:
+      - echo "Rodando testes de aceite (TAAC)..."
+      - python -m pytest tests/acceptance/ -v --tb=short --junit-xml=tests/junit-results.xml
+
+artifacts:
+  files:
+    - "app/tests/junit-results.xml"
+    - "tests/junit-results.xml"
+
+reports:
+  unit-tests:
+    files:
+      - "app/tests/junit-results.xml"
+    file-format: JUNITXML
+  acceptance-tests:
+    files:
+      - "tests/junit-results.xml"
+    file-format: JUNITXML

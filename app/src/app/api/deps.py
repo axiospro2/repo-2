@@ -1,12 +1,17 @@
 """Dependências (singletons reaproveitados entre invocações da Lambda quente).
 
 Uma Lambda serve SALVAR (POST) e BUSCAR (GET). O salvar usa repo + parâmetros; o buscar usa
-repo + NJ6 + Endpoint + catálogo. As integrações de leitura usam MOCK por padrão (fixtures);
-com USAR_MOCK_INTEGRACOES=0 trocam para os stubs HTTP — trocar aqui, sem tocar no service.
+repo + NJ6 + Endpoint + catálogo. `HttpNJ6`/`HttpEndpoint` são sempre a implementação real —
+não há uma classe "mock" alternativa aqui. O ambiente local usa mocks trocando apenas as
+URLs de destino (`NJ6_BASE_URL` etc. apontando para o stack `docker-compose` — ver
+`SETUP.md`), sem precisar tocar neste módulo nem no `service`.
 
-As chamadas externas autenticam com JWT (client_credentials) via um `TokenProvider` único —
-mock por padrão; com `TOKEN_URL` setada vira o provider HTTP real (trocar só a URL).
+As chamadas HTTP (NJ6/Endpoint) autenticam com JWT (client_credentials) via um
+`TokenProvider` único (`get_token_provider`, com `lru_cache`). `ParametrosClient`/
+`ParametrosCatalogo` NÃO usam esse token — conectam direto no cluster QuickConfig via
+`QUICKCONFIG_CLUSTER_MEMBERS` (biblioteca interna `manager`, não HTTP).
 """
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -32,7 +37,7 @@ def get_repo() -> DynamoRepository:
 # ─────────── SALVAR ───────────
 @lru_cache(maxsize=1)
 def get_parametros() -> ParametrosClient:
-    return ParametrosClient(token=get_token_provider())
+    return ParametrosClient()
 
 
 # ─────────── BUSCAR ───────────
@@ -43,9 +48,11 @@ def get_nj6():
 
 @lru_cache(maxsize=1)
 def get_endpoint():
-    return HttpEndpoint(settings.endpoint_base_url, settings.integ_timeout_s, token=get_token_provider())
+    return HttpEndpoint(
+        settings.endpoint_base_url, settings.integ_timeout_s, token=get_token_provider()
+    )
 
 
 @lru_cache(maxsize=1)
 def get_catalogo() -> ParametrosCatalogo:
-    return ParametrosCatalogo(token=get_token_provider())
+    return ParametrosCatalogo()

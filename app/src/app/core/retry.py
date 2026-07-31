@@ -7,14 +7,14 @@ Cada tentativa loga um evento técnico (`integracao.retry`) — visível no Data
 from __future__ import annotations
 
 import logging
-import urllib.error
 
+import urllib3.exceptions
 from tenacity import (
+    before_sleep_log,
     retry,
     retry_if_exception_type,
     stop_after_attempt,
     wait_exponential_jitter,
-    before_sleep_log,
 )
 
 from app.core.logging import get_logger
@@ -22,8 +22,17 @@ from app.core.settings import settings
 
 _logger = get_logger("integracao.retry")
 
-# Erros considerados transitórios (vale retry).
-_TRANSIENTES = (urllib.error.URLError, TimeoutError, ConnectionError)
+
+class ErroServidorIntegracao(Exception):
+    """Levantada pelos adapters quando a integração responde 5xx — transitório, vale retry.
+
+    4xx (exceto quando o adapter já trata, ex. 404) NÃO cai aqui de propósito: erro do
+    cliente não se resolve tentando de novo, só adiciona latência à resposta de erro.
+    """
+
+
+# Erros considerados transitórios (vale retry): falha de rede/timeout (urllib3) ou 5xx.
+_TRANSIENTES = (urllib3.exceptions.HTTPError, ErroServidorIntegracao, TimeoutError, ConnectionError)
 
 
 def http_retry(func):

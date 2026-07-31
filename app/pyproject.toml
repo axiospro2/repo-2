@@ -1,0 +1,22 @@
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+preview = true  # mantém "def f() -> str: ..." compacto nos Protocol (dummy implementations)
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "features"]
+
+[tool.ruff.lint]
+# E/F/W/I: erros, pyflakes (imports não usados, nomes indefinidos), avisos, isort.
+# Propositalmente SEM "UP" (pyupgrade): a base usa `Optional[X]`/`Callable` de forma
+# consistente em todo o código; migrar para `X | Y` seria uma reformatação de estilo
+# em massa sem ganho real, não um lint de correção.
+select = ["E", "F", "I", "W"]
+ignore = [
+    "E501",  # linha longa — deixado para o black decidir, não travar o lint por isso
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

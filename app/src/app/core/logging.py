@@ -12,6 +12,7 @@ Convenção de uso (NÃO logar "estou aqui" — só eventos com contexto):
 Correlação: `bind_context(request_id=...)` deixa todo log subsequente da invocação carregar
 o request_id (via contextvars). Se o ddtrace estiver presente em runtime, injeta dd.trace_id/span_id.
 """
+
 from __future__ import annotations
 
 import json
@@ -43,6 +44,7 @@ def _dd_trace_ids() -> dict:
     """Se o ddtrace estiver disponível, correlaciona log<->trace no Datadog. Opcional."""
     try:
         from ddtrace import tracer  # type: ignore
+
         span = tracer.current_span()
         if span:
             return {"dd.trace_id": str(span.trace_id), "dd.span_id": str(span.span_id)}
@@ -52,37 +54,6 @@ def _dd_trace_ids() -> dict:
 
 
 class _JsonFormatter(logging.Formatter):
-    def format(self, record: logging.LogRecord) -> str:
-        payload: dict[str, Any] = {
-            "timestamp": datetime.fromtimestamp(record.created, timezone.utc).isoformat(),
-            "status": record.levelname.lower(),  # Datadog usa "status"
-            "logger": record.name,
-            "message": record.getMessage(),
-            "service": _SERVICE,
-            "env": _ENV,
-        }
-        payload.update(_context.get())
-        payload.update(_dd_trace_ids())
-        # Campos extras passados via extra={"ctx": {...}}.
-        ctx = getattr(record, "ctx", None)
-        if isinstance(ctx, dict):
-            payload.update(ctx)
-        if record.exc_info:
-            payload["error"] = self.formatException(record.exc_info)
-        return json.dumps(payload, ensure_ascii=False, default=str)
-
-
-def setup_logging() -> None:
-    """Configura o root logger uma vez (idempotente entre invocações da Lambda quente)."""
-    root = logging.getLogger()
-    root.setLevel(_LEVEL)
-    if any(getattr(h, "_faturamento_json", False) for h in root.handlers):
-        return
-    for h in list(root.handlers):
-        root.removeHandler(h)
-        # (line 82 truncated at bottom of frame f_01000 — "root.removeHandler(h)" partially
-        # visible as "noot nemoveHandler(h)" due to rendering; transcribed as best-guess based
-        # on clearly legible surrounding code pattern) 
     def format(self, record: logging.LogRecord) -> str:
         payload: dict[str, Any] = {
             "timestamp": datetime.fromtimestamp(record.created, timezone.utc).isoformat(),
@@ -122,5 +93,12 @@ def get_logger(name: str) -> logging.Logger:
 
 
 def log_event(logger: logging.Logger, event: str, level: str = "info", **fields: Any) -> None:
-    """Loga um evento nomeado com contexto. `event` é o nome do evento (negócio ou técnico)."""
-    logger.log(getattr(logging, level.upper(), logging.INFO), event, extra={"ctx": {"event": event, **fields}})
+    """Loga um evento nomeado com contexto. `event` é o nome do evento (negócio ou técnico).
+
+    Sai cedo se o nível estiver desabilitado (ex.: `debug` com `LOG_LEVEL=INFO`) — evita
+    montar o dict/serializar argumentos à toa em toda chamada do hot path.
+    """
+    levelno = getattr(logging, level.upper(), logging.INFO)
+    if not logger.isEnabledFor(levelno):
+        return
+    logger.log(levelno, event, extra={"ctx": {"event": event, **fields}})

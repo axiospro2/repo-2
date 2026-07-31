@@ -10,6 +10,7 @@ O fluxo é simples:
 Ports (NJ6/Endpoint/Parâmetros) recebem um `TokenProvider` e chamam `auth_headers()`.
 Trocar aqui não toca no domínio.
 """
+
 from __future__ import annotations
 
 from typing import Protocol
@@ -87,13 +88,16 @@ def build_token_provider() -> TokenProvider:
         level="info",
         tipo="OAuth2TokenProvider",
         token_url=token_url,
-        client_id=client_id,
+        client_id_length=len(client_id),
     )
 
     manager = OAuth2Manager(
         token_url=token_url,
         client_id=client_id,
         client_secret=client_secret,
+        itau_apikey=settings.itau_api_key,
+        itau_correlationid=settings.itau_correlation_id,
+        itau_flowid=settings.itau_flow_id,
     )
 
     return OAuth2TokenProvider(manager)

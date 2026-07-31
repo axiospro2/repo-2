@@ -6,7 +6,7 @@ Compara: variação de valor (% acima do limite), troca de moeda e troca de unid
 
 from __future__ import annotations
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Optional
 
 from app.domain.models import MarcadorFaturamento
@@ -16,8 +16,9 @@ def _diferente(x: Optional[str], y: Optional[str]) -> bool:
     return x is not None and y is not None and x.upper() != y.upper()
 
 
-def avaliar(novo: MarcadorFaturamento, existente: Optional[MarcadorFaturamento],
-            limite_pct: int) -> list[dict]:
+def avaliar(
+    novo: MarcadorFaturamento, existente: Optional[MarcadorFaturamento], limite_pct: int
+) -> list[dict]:
     """Lista as divergências entre o marcador novo e o existente (vazio = sem divergência)."""
     out: list[dict] = []
     if existente is None or existente.atual is None:
@@ -39,9 +40,16 @@ def avaliar(novo: MarcadorFaturamento, existente: Optional[MarcadorFaturamento],
             })
 
     if _diferente(a.moeda, b.moeda):
-        out.append({"tipo": "MOEDA", "subgrupoDoc": novo.subgrupo_doc, "de": b.moeda, "para": a.moeda})
+        out.append(
+            {"tipo": "MOEDA", "subgrupoDoc": novo.subgrupo_doc, "de": b.moeda, "para": a.moeda}
+        )
 
     if _diferente(a.unidade, b.unidade):
-        out.append({"tipo": "UNIDADE", "subgrupoDoc": novo.subgrupo_doc, "de": b.unidade, "para": a.unidade})
+        out.append({
+            "tipo": "UNIDADE",
+            "subgrupoDoc": novo.subgrupo_doc,
+            "de": b.unidade,
+            "para": a.unidade,
+        })
 
     return out

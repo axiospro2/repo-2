@@ -2,50 +2,26 @@
 
 Integração HTTP com o serviço NJ6 do Itaú para resolver grupos econômicos.
 """
+
 from __future__ import annotations
 
 import json
-import os
-import ssl
 import urllib.parse
-import urllib.request
 import uuid
 
+import urllib3
+
 from app.adapters.auth import TokenProvider, build_token_provider
+from app.core.http_client import get_pool
 from app.core.logging import get_logger, log_event
-from app.core.retry import http_retry
+from app.core.mascaramento import mascarar_documento
+from app.core.retry import ErroServidorIntegracao, http_retry
 from app.core.settings import settings
+from app.core.ssl_context import criar_contexto_ssl
 from app.domain.errors import NaoEncontrado
 from app.domain.models import Conglomerado, Pessoa, Subgrupo
 
 _logger = get_logger("faturamento.nj6")
-
-def _criar_contexto_ssl() -> ssl.SSLContext | None:
-    """Cria um contexto SSL que valida certificados com a CA bundle fornecida."""
-    cert_file = os.environ.get("SSL_CERT_FILE", "").strip()
-    cert_dir = os.environ.get("SSL_CERT_DIR", "").strip()
-
-    if not cert_file and not cert_dir:
-        return None
-
-    try:
-        context = ssl.create_default_context()
-
-        if cert_file and os.path.isfile(cert_file):
-            context.load_verify_locations(cafile=cert_file)
-            log_event(_logger, "ssl.certificado_carregado", level="debug",
-                      arquivo=cert_file)
-
-        if cert_dir and os.path.isdir(cert_dir):
-            context.load_verify_locations(capath=cert_dir)
-            log_event(_logger, "ssl.diretorio_carregado", level="debug",
-                      diretorio=cert_dir)
-
-        return context
-    except Exception as e:
-        log_event(_logger, "ssl.erro_contexto", level="warning",
-                  erro=str(e), cert_file=cert_file, cert_dir=cert_dir)
-        return None
 
 
 def _map_conglomerado(raw: dict) -> Conglomerado:
@@ -55,12 +31,9 @@ def _map_conglomerado(raw: dict) -> Conglomerado:
     as fixtures vêm direto com a estrutura. Esse método normaliza ambas.
     """
     try:
-        log_event(_logger, "nj6.map_conglomerado.inicio", level="debug", raw_keys=list(raw.keys()) if isinstance(raw, dict) else "não-dict")
-
         # Normalizar: se veio envolvida em "data", desembrulhar
         if "data" in raw and isinstance(raw["data"], list) and raw["data"]:
             raw = raw["data"][0]
-            log_event(_logger, "nj6.map_conglomerado.desembrulhado", level="debug")
 
         subgrupos = []
         for i, s in enumerate(raw.get("subgrupos", [])):
@@ -82,16 +55,18 @@ def _map_conglomerado(raw: dict) -> Conglomerado:
                         participantes=participantes,
                     )
                 )
-                log_event(_logger, "nj6.map_conglomerado.subgrupo_ok", level="debug",
-                          idx=i, nome=s.get("nome_subgrupo"), qtd_participantes=len(participantes))
             except Exception as e:
-                _logger.exception("nj6.map_conglomerado.erro_subgrupo",
-                                   extra={"ctx": {
-                                       "event": "nj6.map_conglomerado.erro_subgrupo",
-                                       "idx": i,
-                                       "tipo_erro": type(e).__name__,
-                                       "mensagem": str(e)
-                                   }})
+                _logger.exception(
+                    "nj6.map_conglomerado.erro_subgrupo",
+                    extra={
+                        "ctx": {
+                            "event": "nj6.map_conglomerado.erro_subgrupo",
+                            "idx": i,
+                            "tipo_erro": type(e).__name__,
+                            "mensagem": str(e),
+                        }
+                    },
+                )
                 raise
 
         result = Conglomerado(
@@ -100,17 +75,26 @@ def _map_conglomerado(raw: dict) -> Conglomerado:
             segmento=raw.get("segmento"),
             subgrupos=subgrupos,
         )
-        log_event(_logger, "nj6.map_conglomerado.sucesso", level="debug",
-                  nome_grupo=result.nome_grupo_economico, qtd_subgrupos=len(subgrupos))
+        log_event(
+            _logger,
+            "nj6.map_conglomerado.sucesso",
+            level="debug",
+            nome_grupo=result.nome_grupo_economico,
+            qtd_subgrupos=len(subgrupos),
+        )
         return result
     except Exception as e:
-        _logger.exception("nj6.map_conglomerado.erro_fatal",
-                           extra={"ctx": {
-                               "event": "nj6.map_conglomerado.erro_fatal",
-                               "tipo_erro": type(e).__name__,
-                               "mensagem": str(e),
-                               "raw_type": type(raw).__name__
-                           }})
+        _logger.exception(
+            "nj6.map_conglomerado.erro_fatal",
+            extra={
+                "ctx": {
+                    "event": "nj6.map_conglomerado.erro_fatal",
+                    "tipo_erro": type(e).__name__,
+                    "mensagem": str(e),
+                    "raw_type": type(raw).__name__,
+                }
+            },
+        )
         raise
 
 
@@ -139,97 +123,90 @@ class HttpNJ6:
 
         # Montar headers
         headers = self._token.auth_headers()  # Authorization: Bearer <JWT>
-        headers["x-itau-apikey"] = os.environ.get("ITAU_API_KEY", "")
+        headers["x-itau-apikey"] = settings.itau_api_key
         headers["x-itau-correlationid"] = correlation_id
         headers["Content-Type"] = "application/json"
 
         # Montar URL com parametro
-        url = f"{self.base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={urllib.parse.quote(documento)}"  # (line continues past right edge)
+        url = f"{self.base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={urllib.parse.quote(documento)}"
 
-        # Log da requisição
+        # Log técnico da requisição — sem a URL completa (contém o documento na querystring)
         log_event(
-            _logger, "nj6.requisicao",
-            level="info",
-            url=url,
-            documento=documento,
+            _logger,
+            "nj6.requisicao",
+            level="debug",
+            documento=mascarar_documento(documento),
             correlation_id=correlation_id,
-            timeout_s=self.timeout,
         )
 
+        pool = get_pool("integrations", criar_contexto_ssl())
+
         try:
-            # Fazer requisição com timeout configurado
-            log_event(_logger, "nj6.http_request.inicio", level="debug",
-                      documento=documento, correlation_id=correlation_id)
-            req = urllib.request.Request(url, method="GET", headers=headers)
-
-            # Usar contexto SSL se estiver configurado
-            ssl_context = _criar_contexto_ssl()
-
-            if ssl_context:
-                with urllib.request.urlopen(req, timeout=self.timeout, context=ssl_context) as response:
-                    raw_response = response.read().decode("utf-8")
-                    log_event(_logger, "nj6.http_request.response_recebida", level="debug",
-                              status_code=response.status, tamanho_bytes=len(raw_response))
-                    data = json.loads(raw_response)
-            else:
-                with urllib.request.urlopen(req, timeout=self.timeout) as response:
-                    raw_response = response.read().decode("utf-8")
-                    log_event(_logger, "nj6.http_request.response_recebida", level="debug",
-                              status_code=response.status, tamanho_bytes=len(raw_response))
-                    data = json.loads(raw_response)
-
-            log_event(_logger, "nj6.http_request.resposta_parseada", level="debug",
-                      status_code=response.status, tipo=type(data).__name__)
-
-            # Log de sucesso
-            log_event(
-                _logger, "nj6.sucesso",
-                level="info",
-                documento=documento,
-                correlation_id=correlation_id,
-                status_code=response.status,
+            resp = pool.request(
+                "GET",
+                url,
+                headers=headers,
+                timeout=urllib3.Timeout(total=self.timeout),
             )
-
-            # Mapear resposta
-            conglomerado = _map_conglomerado(data)
-            return conglomerado
-
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                log_event(
-                    _logger, "nj6.nao_encontrado",
-                    level="info",
-                    documento=documento,
-                    correlation_id=correlation_id,
-                    status_code=e.code,
-                )
-                raise NaoEncontrado(f"Nenhum conglomerado encontrado para o documento {documento}.")
-            else:
-                log_event(
-                    _logger, "nj6.erro_http",
-                    level="error",
-                    documento=documento,
-                    correlation_id=correlation_id,
-                    status_code=e.code,
-                    erro=str(e),
-                )
-                raise
-        except urllib.error.URLError as e:
+        except urllib3.exceptions.HTTPError as e:
             # Erro transitório - será retentado pelo @http_retry
             log_event(
-                _logger, "nj6.erro_rede",
+                _logger,
+                "nj6.erro_rede",
                 level="warning",
-                documento=documento,
+                documento=mascarar_documento(documento),
                 correlation_id=correlation_id,
                 erro=str(e),
                 tentando_novamente=True,
             )
             raise
+
+        if resp.status == 404:
+            log_event(
+                _logger,
+                "nj6.nao_encontrado",
+                level="info",
+                documento=mascarar_documento(documento),
+                correlation_id=correlation_id,
+                status_code=resp.status,
+            )
+            raise NaoEncontrado(f"Nenhum conglomerado encontrado para o documento {documento}.")
+
+        if resp.status >= 400:
+            log_event(
+                _logger,
+                "nj6.erro_http",
+                level="error",
+                documento=mascarar_documento(documento),
+                correlation_id=correlation_id,
+                status_code=resp.status,
+                erro=resp.data.decode("utf-8", errors="replace")[:500],
+            )
+            if resp.status >= 500:
+                # 5xx é transitório - será retentado pelo @http_retry
+                raise ErroServidorIntegracao(f"NJ6 retornou HTTP {resp.status}")
+            raise RuntimeError(f"NJ6 retornou HTTP {resp.status}")
+
+        try:
+            data = json.loads(resp.data.decode("utf-8"))
+
+            log_event(
+                _logger,
+                "nj6.sucesso",
+                level="debug",
+                documento=mascarar_documento(documento),
+                correlation_id=correlation_id,
+                status_code=resp.status,
+            )
+
+            return _map_conglomerado(data)
+
         except json.JSONDecodeError as e:
             log_event(
-                _logger, "nj6.erro_json",
+                _logger,
+                "nj6.erro_json",
                 level="error",
-                documento=documento,
+                documento=mascarar_documento(documento),
                 correlation_id=correlation_id,
                 tipo_erro=type(e).__name__,
                 erro=str(e),
@@ -237,9 +214,10 @@ class HttpNJ6:
             raise
         except Exception as e:
             log_event(
-                _logger, "nj6.erro",
+                _logger,
+                "nj6.erro",
                 level="error",
-                documento=documento,
+                documento=mascarar_documento(documento),
                 correlation_id=correlation_id,
                 tipo_erro=type(e).__name__,
                 erro=str(e),

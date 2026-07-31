@@ -17,11 +17,12 @@ import os
 import ssl
 import time
 import urllib.parse
-import urllib.request
-import urllib.error
 from dataclasses import dataclass, field
 from typing import Optional
 
+import urllib3
+
+from app.core.http_client import get_pool
 from app.core.logging import get_logger, log_event
 
 _logger = get_logger("oauth2")
@@ -34,7 +35,7 @@ def _get_ssl_context() -> Optional[ssl.SSLContext]:
     """Cria contexto SSL que valida certificados com CA bundle customizada (layer Lambda)."""
     # Tentar caminhos possíveis do certificado
     cert_paths = [
-        "/opt/ca_bundle.crt",     # Layer nova (layer-crito-pki-dev/prod)
+        "/opt/ca_bundle.crt",  # Layer nova (layer-crito-pki-dev/prod)
         "/opt/certs/ca_bundle.crt",  # Layer legada
     ]
 
@@ -44,14 +45,16 @@ def _get_ssl_context() -> Optional[ssl.SSLContext]:
                 context = ssl.create_default_context()
                 context.load_verify_locations(cafile=cert_path)
                 log_event(
-                    _logger, "ssl.certificado_carregado",
+                    _logger,
+                    "ssl.certificado_carregado",
                     level="debug",
                     caminho=cert_path,
                 )
                 return context
             except Exception as e:
                 log_event(
-                    _logger, "ssl.erro_carregando_cert",
+                    _logger,
+                    "ssl.erro_carregando_cert",
                     level="warning",
                     caminho=cert_path,
                     erro=str(e),
@@ -59,7 +62,8 @@ def _get_ssl_context() -> Optional[ssl.SSLContext]:
 
     # Fallback: usar certificate store do SO
     log_event(
-        _logger, "ssl.usando_certificado_sistema",
+        _logger,
+        "ssl.usando_certificado_sistema",
         level="debug",
     )
     return ssl.create_default_context()
@@ -77,7 +81,9 @@ class OAuth2Manager:
 
     # Headers customizados do Itaú (lê do environment, permite override)
     itau_apikey: str = field(default_factory=lambda: os.environ.get("ITAU_API_KEY", ""))
-    itau_correlationid: str = field(default_factory=lambda: os.environ.get("ITAU_CORRELATION_ID", ""))
+    itau_correlationid: str = field(
+        default_factory=lambda: os.environ.get("ITAU_CORRELATION_ID", "")
+    )
     itau_flowid: str = field(default_factory=lambda: os.environ.get("ITAU_FLOW_ID", ""))
 
     def __post_init__(self):
@@ -167,26 +173,40 @@ class OAuth2Manager:
         if self.itau_flowid:
             headers["x-itau-flowid"] = self.itau_flowid
 
-        log_event(
-            _logger,
-            "oauth2.requisicao.enviando",
-            level="debug",
-            token_url=self.token_url,
-            headers_enviados=list(headers.keys()),
-        )
+        pool = get_pool("oauth2", _get_ssl_context())
 
         try:
-            req = urllib.request.Request(
+            resp = pool.request(
+                "POST",
                 self.token_url,
-                data=corpo,
-                method="POST",
+                body=corpo,
                 headers=headers,
+                timeout=urllib3.Timeout(total=self.timeout_s),
             )
+        except urllib3.exceptions.HTTPError as e:
+            log_event(
+                _logger,
+                "oauth2.erro.rede",
+                level="error",
+                token_url=self.token_url,
+                erro=str(e),
+            )
+            raise
 
-            ssl_context = _get_ssl_context()
+        if resp.status >= 400:
+            erro_body = resp.data.decode("utf-8", errors="replace")
+            log_event(
+                _logger,
+                "oauth2.erro.http",
+                level="error",
+                token_url=self.token_url,
+                status_code=resp.status,
+                erro_body=erro_body,
+            )
+            raise RuntimeError(f"STS retornou HTTP {resp.status} em {self.token_url}")
 
-            with urllib.request.urlopen(req, timeout=self.timeout_s, context=ssl_context) as response:
-                data = json.loads(response.read().decode("utf-8"))
+        try:
+            data = json.loads(resp.data.decode("utf-8"))
 
             token = data.get("access_token")
             if not token:
@@ -202,32 +222,6 @@ class OAuth2Manager:
             )
 
             return token, expires_in
-
-        except urllib.error.HTTPError as e:
-            try:
-                erro_body = e.read().decode("utf-8")
-            except Exception:
-                erro_body = str(e)
-
-            log_event(
-                _logger,
-                "oauth2.erro.http",
-                level="error",
-                token_url=self.token_url,
-                status_code=e.code,
-                erro_body=erro_body,
-            )
-            raise
-
-        except urllib.error.URLError as e:
-            log_event(
-                _logger,
-                "oauth2.erro.rede",
-                level="error",
-                token_url=self.token_url,
-                erro=str(e),
-            )
-            raise
 
         except json.JSONDecodeError as e:
             log_event(

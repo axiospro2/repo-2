@@ -1,0 +1,11 @@
+-r requirements.txt
+pytest==8.3.4
+pytest-bdd>=7.0
+pytest-cov==6.0.0
+httpx>=0.27
+
+# Ferramentas de desenvolvimento local - nenhuma delas é importada pelo código
+# de produção. Na Lambda de verdade o Mangum lida com a invocação, não o
+# uvicorn; e as variáveis de ambiente vêm reais, não de um .env.
+python-dotenv[cli]>=1.0
+uvicorn>=0.30,<1.0

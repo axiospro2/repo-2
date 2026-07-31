@@ -5,8 +5,10 @@ Request (só SALVAR): Pydantic aqui SÓ parseia/tipa o JSON (camelCase) - NÃO v
 é autoritativa no domínio/service, num lugar só. Por isso todos os campos são opcionais aqui.
 
 Response: um envelope único (`faturamento_out`) serve POST e GET. No GET vêm preenchidos
-segmento/paginação/rótulo da faixa/passthrough; no POST esses campos podem vir null.
+segmento/rótulo da faixa/passthrough; no POST esses campos podem vir null. Sem paginação:
+a lista de marcadores traz sempre a matriz + todos os subgrupos (confirmado com o PO).
 """
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -23,6 +25,7 @@ from app.domain.models import (
     Origem,
 )
 
+
 class _Base(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True, extra="ignore")
 
@@ -37,17 +40,6 @@ class InfoIn(_Base):
     id_spread: Optional[str] = None
 
 
-class MetadadosPorSubgrupoIn(_Base):
-    """Metadados COMPARTILHADOS para todos os marcadores editados (naoFoiEditado=false).
-
-    Fica no TOPO do FaturamentoRequest - não se repete por marcador.
-    É ignorado para marcadores com naoFoiEditado=true (esses buscam do endpoint).
-    """
-    auditado: Optional[bool] = None
-    original: Optional[bool] = None
-    vigente: Optional[bool] = None
-
-
 class MarcadorIn(_Base):
     subgrupo_doc: Optional[str] = None
     nome: Optional[str] = None
@@ -56,55 +48,65 @@ class MarcadorIn(_Base):
     confirmado_divergencia: bool = False
     sem_faturamento: bool = False
     justificativa: Optional[str] = None
-    faturamento_modificado: bool = False  # True = foi editado, False = não foi editado
     atual: Optional[InfoIn] = None
     faturamento_cra: Optional[InfoIn] = None
 
 
 class FaturamentoRequest(_Base):
     conglomerado_doc: Optional[str] = None
-    metadados_por_subgrupo: Optional[MetadadosPorSubgrupoIn] = None # compartilhado (topo)
+    nome_responsavel: Optional[str] = None  # nome de quem informou - vem no BODY, não no header
     marcadores: list[MarcadorIn] = []
 
     def to_domain(self, documento: str, racf: Optional[str] = None) -> "Faturamento":
-        """`racf` vem SEMPRE no header (responsabilização) - carimbado em todos os marcadores."""
+        """`racf` vem SEMPRE no header (responsabilização); `nome_responsavel` vem no
+        body - os dois são carimbados em todos os marcadores."""
         cdoc = self.conglomerado_doc or documento
         marcadores = []
         for m in self.marcadores:
-            atual = _in_to_info(m.atual, id_spread=m.id_spread, sistema_origem=m.sistema_origem, racf=racf)
+            atual = _in_to_info(
+                m.atual,
+                id_spread=m.id_spread,
+                sistema_origem=m.sistema_origem,
+                racf=racf,
+                nome_responsavel=self.nome_responsavel,
+            )
             cra = _in_to_info(m.faturamento_cra) if m.faturamento_cra else None
-            marcadores.append(MarcadorFaturamento(
-                conglomerado_doc=cdoc,
-                subgrupo_doc=m.subgrupo_doc,
-                nome=m.nome,
-                atual=atual,
-                faturamento_cra=cra,
-                sem_faturamento=m.sem_faturamento,
-                justificativa=m.justificativa,
-                origem=Origem.MANUAL,
-                confirmado_divergencia=m.confirmado_divergencia,
-                faturamento_modificado=m.faturamento_modificado,  # repassa ao domain
-            ))
-        return Faturamento(
-            conglomerado_doc=cdoc,
-            marcadores=marcadores,
-            metadados_compartilhados=self.metadados_por_subgrupo,  # repassa ao domain
-        )
+            marcadores.append(
+                MarcadorFaturamento(
+                    conglomerado_doc=cdoc,
+                    subgrupo_doc=m.subgrupo_doc,
+                    nome=m.nome,
+                    atual=atual,
+                    faturamento_cra=cra,
+                    sem_faturamento=m.sem_faturamento,
+                    justificativa=m.justificativa,
+                    origem=Origem.MANUAL,
+                    confirmado_divergencia=m.confirmado_divergencia,
+                )
+            )
+        return Faturamento(conglomerado_doc=cdoc, marcadores=marcadores)
 
 
-def _in_to_info(info_in: Optional[InfoIn], *, id_spread: Optional[str] = None,
-                sistema_origem: Optional[str] = None, racf: Optional[str] = None) -> InfoFaturamento:
+def _in_to_info(
+    info_in: Optional[InfoIn],
+    *,
+    id_spread: Optional[str] = None,
+    sistema_origem: Optional[str] = None,
+    racf: Optional[str] = None,
+    nome_responsavel: Optional[str] = None,
+) -> InfoFaturamento:
     """InfoIn (request) -> InfoFaturamento. `id_spread` do marcador tem prioridade; senão o do próprio info."""
     info = info_in or InfoIn()
     return InfoFaturamento(
         valor=info.valor,
         faixa_codigo=info.faixa_codigo,
         data_ref_balanco=info.data_ref_balanco,
-        moeda=info.moeda,               # None -> service rejeita (moeda obrigatória) no atual
+        moeda=info.moeda,  # None -> service rejeita (moeda obrigatória) no atual
         unidade=info.unidade or "milhoes",
         id_spread=id_spread if id_spread is not None else info.id_spread,
         sistema_origem=sistema_origem,
         racf=racf,
+        nome_responsavel=nome_responsavel,
     )
 
 
@@ -124,6 +126,7 @@ def _info_out(info: Optional[InfoFaturamento]) -> Optional[dict]:
         "moeda": info.moeda,
         "unidade": info.unidade,
         "idSpread": info.id_spread,  # "código spread" da grade de detalhe (tela 2/3)
+        "nomeResponsavel": info.nome_responsavel,  # coluna "Responsável" da tela
     }
 
 
@@ -136,28 +139,15 @@ def _marcador_out(m: MarcadorFaturamento) -> dict:
         "nome": m.nome,
         "atual": _info_out(m.atual),
         "faturamentoCra": _info_out(m.faturamento_cra),  # referência do modal "editar faturamento"
-        "semFaturamento": m.sem_faturamento,             # "Não possuo o faturamento"
-        "origem": m.origem.value,                        # front mapeia o badge (CRA / Editado / Manual)
+        "semFaturamento": m.sem_faturamento,  # "Não possuo o faturamento"
+        "origem": m.origem.value,  # front mapeia o badge (CRA / Editado / Manual)
         "justificativa": m.justificativa,
-        "atualizadoEm": m.atualizado_em,                 # timestamp da última atualização
+        "atualizadoEm": m.atualizado_em,  # timestamp da última atualização
         # passthrough do CRA (grade de detalhe das telas 2/3):
         "nomeSpread": m.nome_spread,
         "arquivo": m.arquivo,
         "status": m.status,
         "categoria": m.categoria,
-    }
-
-
-def _paginacao_out(f: Faturamento) -> Optional[dict]:
-    p = f.paginacao
-    if p is None:
-        return None
-    return {
-        "limit": p.limit,
-        "offset": p.offset,
-        "total": p.total,
-        "proximoCursor": p.proximo_cursor,
-        "temMais": p.tem_mais,
     }
 
 
@@ -168,22 +158,19 @@ def faturamento_out(f: Faturamento, persistido: bool = True) -> dict:
         "segmento": f.segmento,
         "origemDados": "BASE" if persistido else "PREVIEW",
         "atualizadoEm": f.atualizado_em,
-        "paginacao": _paginacao_out(f),
         "marcadores": [_marcador_out(m) for m in f.marcadores],
     }
 
 
 def conglomerado_out(c: Conglomerado) -> dict:
     """GET /conglomerados/{documento}/subgrupos - hierarquia crua (tabela de integrantes da tela 2)."""
-    from app.core.logging import get_logger, log_event
+    from app.core.logging import get_logger
+
     logger = get_logger("faturamento.schemas")
 
     try:
-        log_event(logger, "conglomerado_out.inicio", level="debug",
-                  nome_grupo=c.nome_grupo_economico, qtd_subgrupos=len(c.subgrupos))
-
         subgrupos_out = []
-        for i, s in enumerate(c.subgrupos):
+        for s in c.subgrupos:
             try:
                 participantes_out = [
                     {
@@ -194,39 +181,41 @@ def conglomerado_out(c: Conglomerado) -> dict:
                     }
                     for p in s.participantes
                 ]
-                subgrupo_out = {
+                subgrupos_out.append({
                     "nomeSubgrupo": s.nome_subgrupo,
                     "cabecaDocumentoRaiz": s.cabeca_documento_raiz,
                     "codigoGrupoClienteAtacado": s.codigo_grupo_cliente_atacado,
                     "participantes": participantes_out,
-                }
-                subgrupos_out.append(subgrupo_out)
-                log_event(logger, "conglomerado_out.subgrupo_ok", level="debug",
-                          idx=i, nome=s.nome_subgrupo, qtd_participantes=len(participantes_out))
+                })
             except Exception as e:
-                logger.exception("conglomerado_out.erro_subgrupo",
-                                 extra={"ctx": {
-                                     "event": "conglomerado_out.erro_subgrupo",
-                                     "idx": i,
-                                     "tipo_erro": type(e).__name__,
-                                     "mensagem": str(e),
-                                     "nome_subgrupo": s.nome_subgrupo
-                                 }})
+                logger.exception(
+                    "conglomerado_out.erro_subgrupo",
+                    extra={
+                        "ctx": {
+                            "event": "conglomerado_out.erro_subgrupo",
+                            "tipo_erro": type(e).__name__,
+                            "mensagem": str(e),
+                            "nome_subgrupo": s.nome_subgrupo,
+                        }
+                    },
+                )
                 raise
 
-        result = {
+        return {
             "nomeGrupoEconomico": c.nome_grupo_economico,
             "cabecaDocumentoRaiz": c.cabeca_documento_raiz,
             "segmento": c.segmento,
             "subgrupos": subgrupos_out,
         }
-        log_event(logger, "conglomerado_out.sucesso", level="debug")
-        return result
     except Exception as e:
-        logger.exception("conglomerado_out.erro_fatal",
-                         extra={"ctx": {
-                             "event": "conglomerado_out.erro_fatal",
-                             "tipo_erro": type(e).__name__,
-                             "mensagem": str(e)
-                         }})
+        logger.exception(
+            "conglomerado_out.erro_fatal",
+            extra={
+                "ctx": {
+                    "event": "conglomerado_out.erro_fatal",
+                    "tipo_erro": type(e).__name__,
+                    "mensagem": str(e),
+                }
+            },
+        )
         raise

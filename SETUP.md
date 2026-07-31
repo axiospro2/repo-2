@@ -6,14 +6,16 @@
 docker-compose.yml       # orquestra os 3 serviços de mock (nada aqui toca em app/)
 mocks/
   app/
-    main.py              # FastAPI: mock de NJ6, Endpoint, Parâmetros e OAuth2/STS
+    main.py              # FastAPI: mock de NJ6, Endpoint e OAuth2/STS (NÃO mocka parâmetros)
     fixtures/
-      faixas.json
       nj6.json
       endpoint.json
   db/
     init_table.py        # cria a tabela no DynamoDB local (roda 1x, container sobe e sai)
 app/                      # aplicação real — NENHUM arquivo aqui foi alterado para os mocks
+dev-stubs/
+  manager/               # stub de import da lib interna QuickConfig (`manager`) — só
+                         # existe pra rodar localmente fora da rede do Itaú; ver §3
 ```
 
 ## 1. Subir os mocks (DynamoDB local + tabela + API de mocks)
@@ -27,9 +29,14 @@ Isso sobe:
 - `dynamodb-init` (roda uma vez, cria a tabela `tbcv4163_fatm_cogl_subg`, sai com status 0)
 - `mock-api` (porta **8080**), expondo:
   - `POST /oauth/token` — token OAuth2 fake (aceita qualquer client_id/secret)
-  - `GET /parametros` — faixas + moedas (fixture `faixas.json`)
   - `GET /consulta-gruposeconomicos/v1/grupos-economicos` — NJ6 (fixture `nj6.json`)
   - `GET /gestaobalanco/v1/spreads-faturamento` — Endpoint/CRA (fixture `endpoint.json`)
+
+> **Parâmetros (faixas/moedas/limite de divergência) não são mockados aqui** — o serviço
+> real é o QuickConfig (lib interna `manager`, não HTTP). Local, sem
+> `QUICKCONFIG_CLUSTER_MEMBERS` configurado, `ParametrosClient`/`ParametrosCatalogo` caem
+> direto no fallback hardcoded do próprio adapter (6 faixas, BRL/USD, 30% de limite) — ver
+> `app/src/app/adapters/parametros.py`.
 
 Verificar:
 ```bash
@@ -64,13 +71,18 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 export $(cat .env | xargs)
-export PYTHONPATH=app/src
+export PYTHONPATH=app/src:dev-stubs
 
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 (Se a 8000 também estiver ocupada por outro projeto seu, use `--port 8001` e ajuste onde for
 testar.)
+
+> **`dev-stubs` no `PYTHONPATH` é obrigatório localmente**: `adapters/parametros.py` importa
+> a lib interna `manager` (QuickConfig) no topo do arquivo — sem o stub, o `uvicorn` quebra
+> ao importar `app.main` (mesmo o `pytest` já tem seu próprio stub equivalente, em
+> `app/tests/conftest.py`, então os testes não precisam disso).
 
 ## 4. Testar
 

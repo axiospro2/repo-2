@@ -1,4 +1,5 @@
 """Exceções de domínio (mapeadas para HTTP nos exception handlers do FastAPI)."""
+
 from __future__ import annotations
 
 

@@ -15,16 +15,20 @@ Cascata **R1 → R2 → R3**: a primeira regra com candidato ganha.
 
 Campos do contrato real (usa-se o `codigo` do enum, mais estável que a string):
   - `auditoria.possuiAuditoria` = auditado.
-  - `indicadorFatorPonderado` = "balanço original": original ⇔ NÃO ponderado (== False). ⚠ pendência:
-    confirmar a polaridade com o time do Endpoint (assume-se true = ponderado/ajustado = não original).
+  - `indicadorFatorPonderado` = "balanço original": original ⇔ `indicadorFatorPonderado == True`
+    (polaridade confirmada com o PO — era pendência `R-PEND-009`).
   - `indicadorVigente.descricao == "Ativo"` = vigente/válido.
   - `situacao.codigo == 3` = Aprovado (4 "Histórico Aprovado" NÃO conta).
   - `categoria.codigo` no enum 1..9 (ver PRIORIDADE_CATEGORIA_R1 / CATEGORIAS_R3_EXCLUIDAS).
-  - `faturamento[]` = histórico `{dataReferencia, valor}`; `atualizado` = data de atualização.
+  - `faturamento[]` = histórico `{dataReferencia, valor}`; `atualizacao` = data de atualização
+    (nome real confirmado numa fixture de resposta do Endpoint — não é "atualizado").
 
 ⚠ Semântica de "idade" e de histórico com datas futuras pende de confirmação (Deus/Felipe). Assume-se:
 o "balanço vigente" de uma análise é o `faturamento` mais recente com `dataReferencia <= asof` e idade
-<= 24 meses. O multiplicador de `unidade` (ex.: "Mil" = ×1000) NÃO é aplicado aqui — ver pendência.
+<= 24 meses. O multiplicador de `unidade` (ex.: "Mil" = ×1000) NÃO é aplicado aqui — `valor_faturamento`
+sai cru, com a unidade ao lado; a escala pra reais é aplicada mais adiante, só no momento da
+classificação de faixa (`domain.resolucao_marcador.marcador_do_endpoint` -> `domain.faixa.valor_em_reais`),
+não aqui, pra manter `valor_faturamento` == o dado bruto do provedor (era pendência, ver `R-PEND-010`).
 """
 
 from __future__ import annotations
@@ -33,7 +37,6 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from typing import Callable, Optional
-
 
 IDADE_MAX_MESES = 24
 
@@ -50,6 +53,7 @@ CATEGORIAS_R3_EXCLUIDAS: frozenset[int] = frozenset({1, 6, 7, 8, 9})
 @dataclass
 class ResultadoFaturamento:
     """Retorno do Endpoint JÁ ELEITO pelas R1/R2/R3. `id_spread` é procedência OPCIONAL."""
+
     valor_faturamento: Decimal
     data_ref_balanco: str
     id_spread: Optional[str] = None
@@ -61,6 +65,7 @@ class ResultadoFaturamento:
 @dataclass(frozen=True)
 class _Candidato:
     """Uma análise + o balanço vigente escolhido dentro dela."""
+
     analise: dict
     balanco: dict
 
@@ -71,22 +76,21 @@ class _Candidato:
     @property
     def valor(self) -> Decimal:
         return Decimal(str(self.balanco["valor"]))
+
     @property
     def categoria_codigo(self) -> Optional[int]:
         return _codigo(self.analise.get("categoria"))
 
     @property
     def atualizado(self) -> str:
-        return self.analise.get("atualizado") or ""
+        return self.analise.get("atualizacao") or ""
 
 
 def eleger(analises: list[dict], asof: Optional[date] = None) -> Optional[ResultadoFaturamento]:
     """Aplica a cascata R1 → R2 → R3 às análises e devolve o resultado eleito (ou None)."""
     hoje = asof or date.today()
     candidatos = [
-        _Candidato(a, bal)
-        for a in analises
-        if (bal := _balanco_vigente(a, hoje)) is not None
+        _Candidato(a, bal) for a in analises if (bal := _balanco_vigente(a, hoje)) is not None
     ]
 
     for criterio, desempate in _REGRAS:
@@ -99,7 +103,8 @@ def eleger(analises: list[dict], asof: Optional[date] = None) -> Optional[Result
 def _balanco_vigente(analise: dict, asof: date) -> Optional[dict]:
     """Faturamento mais recente da análise com dataReferencia <= asof e idade <= 24 meses."""
     na_janela = [
-        f for f in (analise.get("faturamento") or [])
+        f
+        for f in (analise.get("faturamento") or [])
         if _dentro_da_janela(date.fromisoformat(f["dataReferencia"]), asof)
     ]
     if not na_janela:
@@ -113,13 +118,14 @@ def _dentro_da_janela(ref: date, asof: date) -> bool:
 
 # ────────── predicados sobre a análise (campos do JSON do Endpoint) ──────────
 
+
 def _auditado(a: dict) -> bool:
     return (a.get("auditoria") or {}).get("possuiAuditoria") is True
 
 
 def _original(a: dict) -> bool:
-    # original ⇔ NÃO ponderado (sem ajuste do analista). ⚠ polaridade a confirmar.
-    return a.get("indicadorFatorPonderado") is False
+    # original ⇔ `indicadorFatorPonderado is True` (polaridade confirmada com o PO).
+    return a.get("indicadorFatorPonderado") is True
 
 
 def _vigente(a: dict) -> bool:
@@ -143,16 +149,23 @@ def _desempate_r1(c: _Candidato) -> tuple[int, str, str]:
 # Cascata: (critério de elegibilidade, chave de desempate do max()).
 _REGRAS: tuple[tuple[Callable[[dict], bool], Callable[[_Candidato], object]], ...] = (
     # R1: auditado + original + vigente, só nas 5 categorias → prioridade/atualização/balanco
-    (lambda a: _auditado(a) and _original(a) and _vigente(a)
-     and _categoria(a) in PRIORIDADE_CATEGORIA_R1,
-     _desempate_r1),
+    (
+        lambda a: _auditado(a)
+        and _original(a)
+        and _vigente(a)
+        and _categoria(a) in PRIORIDADE_CATEGORIA_R1,
+        _desempate_r1,
+    ),
     # R2: auditado + vigente + Aprovado(3) → mais recente
-    (lambda a: _auditado(a) and _vigente(a) and _aprovado(a),
-     lambda c: c.data_ref),
+    (lambda a: _auditado(a) and _vigente(a) and _aprovado(a), lambda c: c.data_ref),
     # R3: original + vigente + Aprovado(3), exclui combinados/individuais → MAIOR VALOR
-    (lambda a: _original(a) and _vigente(a) and _aprovado(a)
-     and _categoria(a) not in CATEGORIAS_R3_EXCLUIDAS,
-     lambda c: c.valor),
+    (
+        lambda a: _original(a)
+        and _vigente(a)
+        and _aprovado(a)
+        and _categoria(a) not in CATEGORIAS_R3_EXCLUIDAS,
+        lambda c: c.valor,
+    ),
 )
 
 
@@ -169,6 +182,7 @@ def _to_resultado(c: _Candidato) -> ResultadoFaturamento:
 
 
 # ────────── helpers ──────────
+
 
 def _descricao(cod_desc: Optional[dict]) -> str:
     return (cod_desc or {}).get("descricao") or ""

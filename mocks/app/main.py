@@ -1,4 +1,4 @@
-"""Serviço de mock para NJ6, Endpoint de Faturamento, Parâmetros e o STS (token OAuth2).
+"""Serviço de mock para NJ6, Endpoint de Faturamento e o STS (token OAuth2).
 
 Projeto isolado — não faz parte da aplicação real. Serve fixtures estáticas nos
 mesmos paths que os adapters de `app/src/app/adapters/*.py` chamam, para permitir
@@ -6,9 +6,13 @@ rodar a BFF localmente sem acesso aos serviços reais do Itaú.
 
 Paths espelhados (confirmar contra os adapters se algo mudar lá):
   - POST /oauth/token                                                      (auth.py / oauth2.py)
-  - GET  /parametros                                                       (parametros.py)
   - GET  /consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa=  (nj6.py)
-  - GET  /gestaobalanco/v1/spreads-faturamento?subgrupo=                   (endpoint.py)
+  - GET  /gestaobalanco/v1/spreads-faturamento?documento=&valido=&page=&size=  (endpoint.py)
+
+Não mocka parâmetros (faixas/moedas/limite de divergência) — isso vem do QuickConfig
+(lib interna `manager`), não é HTTP. Local, sem `QUICKCONFIG_CLUSTER_MEMBERS`, o
+adapter (`ParametrosClient`/`ParametrosCatalogo`) cai direto no fallback hardcoded —
+ver `app/src/app/adapters/parametros.py` e `dev-stubs/manager/` (stub de import).
 """
 from __future__ import annotations
 
@@ -46,13 +50,6 @@ async def oauth_token(request: Request):
     }
 
 
-# ─────────── Parâmetros (faixas/moedas/gate) ───────────
-
-@app.get("/parametros")
-def parametros():
-    return _load("faixas.json")
-
-
 # ─────────── NJ6 (hierarquia conglomerado → subgrupos) ───────────
 
 @app.get("/consulta-gruposeconomicos/v1/grupos-economicos")
@@ -63,5 +60,7 @@ def nj6(codigo_identificacao_pessoa: str = ""):
 # ─────────── Endpoint de Faturamento (Gestão Balanço / spreads / CRA) ───────────
 
 @app.get("/gestaobalanco/v1/spreads-faturamento")
-def endpoint_spreads(subgrupo: str = ""):
+def endpoint_spreads(documento: str = "", valido: str = "", page: int = 1, size: int = 100):
+    """Fixture estática de 1 página só (`totalPages: 1`) - não filtra de verdade
+    por `documento`/`valido`, só aceita os parâmetros reais do contrato."""
     return _load("endpoint.json")
