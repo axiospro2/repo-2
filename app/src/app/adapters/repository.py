@@ -45,13 +45,15 @@ def _info_to_map(info: Optional[InfoFaturamento]) -> Optional[dict]:
         "id_spread": info.id_spread,
         "sistema_origem": info.sistema_origem,
         "racf": info.racf,
-        "nome_responsavel": info.nome_responsavel,
+        "auditoria": info.auditoria,
+        "valor_ativo": info.valor_ativo,
     })
 
 
 def _info_from_map(m: Optional[dict]) -> InfoFaturamento:
     m = m or {}
     valor = m.get("valor")
+    valor_ativo = m.get("valor_ativo")
     return InfoFaturamento(
         valor=Decimal(str(valor)) if valor is not None else None,
         faixa_codigo=m.get("faixa_codigo"),
@@ -61,7 +63,8 @@ def _info_from_map(m: Optional[dict]) -> InfoFaturamento:
         id_spread=m.get("id_spread"),
         sistema_origem=m.get("sistema_origem"),
         racf=m.get("racf"),
-        nome_responsavel=m.get("nome_responsavel"),
+        auditoria=m.get("auditoria"),
+        valor_ativo=Decimal(str(valor_ativo)) if valor_ativo is not None else None,
     )
 
 
@@ -162,10 +165,6 @@ class DynamoRepository:
             justificativa=it.get("justificativa"),
             origem=Origem(it.get("origem", "MANUAL")),
             aceite=bool(it.get("aceite", False)),
-            nome_spread=it.get("nome_spread"),
-            arquivo=it.get("arquivo"),
-            status=it.get("status"),
-            categoria=it.get("categoria"),
             quarentena=bool(it.get("quarentena", False)),
             quarentena_desde=it.get("quarentena_desde"),
             atualizado_em=it.get("atualizado_em"),

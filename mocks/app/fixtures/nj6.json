@@ -1,39 +1,1559 @@
 {
-  "data": [
-    {
-      "nome_grupo_economico": "COSAN S A",
-      "codigo_tipo_grupo_economico": "E",
-      "data_hora_atualizacao": "2026-07-03T10:37:28",
-      "numero_funcional_atualizacao": "987350376",
-      "texto_justificativa_atualizacao": "Sem Justificativa",
-      "cabeca_grupo": {
-        "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
-        "codigo_tipo_pessoa": "J",
-        "indicador_estrangeiro": 0,
-        "documento_raiz": "050746577"
-      },
-      "subgrupos": [
-        {
-          "nome_subgrupo": "OUTROS",
-          "codigo_grupo_cliente_atacado": 0,
-          "cabeca_subgrupo": {
-            "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
-            "codigo_tipo_pessoa": "J",
-            "indicador_estrangeiro": 0,
-            "documento_raiz": "050746577"
-          },
-          "participantes": [
-            {
-              "pessoa": {
-                "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
-                "codigo_tipo_pessoa": "J",
-                "indicador_estrangeiro": 0,
-                "documento_raiz": "050746577"
-              }
+  "900001000": {
+    "nome_grupo_economico": "Alfa Comércio e Distribuição S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900001000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900001000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900001000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900001000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900001000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900001000"
             }
-          ]
-        }
-      ]
-    }
-  ]
+          }
+        ]
+      }
+    ],
+    "segmento": "Varejo"
+  },
+  "900002000": {
+    "nome_grupo_economico": "Beta Participações Ltda",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900002000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900002000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900002000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900002000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900002000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900002000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Beta Norte",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900002001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900002001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900002001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900002001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Beta Sul",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900002002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900002002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900002002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900002002"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900003000": {
+    "nome_grupo_economico": "Gamma Indústria e Comércio S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900003000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900003000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Norte",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Sul",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003002"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Leste",
+        "codigo_grupo_cliente_atacado": 3,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003003",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003003"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003003",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003003"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Oeste",
+        "codigo_grupo_cliente_atacado": 4,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003004",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003004"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003004",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003004"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Centro",
+        "codigo_grupo_cliente_atacado": 5,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003005",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003005"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003005",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003005"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Litoral",
+        "codigo_grupo_cliente_atacado": 6,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003006",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003006"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003006",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003006"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Interior",
+        "codigo_grupo_cliente_atacado": 7,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003007",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003007"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003007",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003007"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Gamma Fronteira",
+        "codigo_grupo_cliente_atacado": 8,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900003008",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900003008"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900003008",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900003008"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900004000": {
+    "nome_grupo_economico": "Delta Holding Multinegócios S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900004000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900004000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 01",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 02",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004002"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 03",
+        "codigo_grupo_cliente_atacado": 3,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004003",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004003"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004003",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004003"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 04",
+        "codigo_grupo_cliente_atacado": 4,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004004",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004004"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004004",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004004"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 05",
+        "codigo_grupo_cliente_atacado": 5,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004005",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004005"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004005",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004005"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 06",
+        "codigo_grupo_cliente_atacado": 6,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004006",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004006"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004006",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004006"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 07",
+        "codigo_grupo_cliente_atacado": 7,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004007",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004007"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004007",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004007"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 08",
+        "codigo_grupo_cliente_atacado": 8,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004008",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004008"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004008",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004008"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 09",
+        "codigo_grupo_cliente_atacado": 9,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004009",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004009"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004009",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004009"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 10",
+        "codigo_grupo_cliente_atacado": 10,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004010",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004010"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004010",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004010"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 11",
+        "codigo_grupo_cliente_atacado": 11,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004011",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004011"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004011",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004011"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 12",
+        "codigo_grupo_cliente_atacado": 12,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004012",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004012"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004012",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004012"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 13",
+        "codigo_grupo_cliente_atacado": 13,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004013",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004013"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004013",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004013"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 14",
+        "codigo_grupo_cliente_atacado": 14,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004014",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004014"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004014",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004014"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 15",
+        "codigo_grupo_cliente_atacado": 15,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004015",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004015"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004015",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004015"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Delta Unidade 16",
+        "codigo_grupo_cliente_atacado": 16,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900004016",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900004016"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900004016",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900004016"
+            }
+          }
+        ]
+      }
+    ],
+    "segmento": "Atacado"
+  },
+  "900005000": {
+    "nome_grupo_economico": "Épsilon Comércio Varejista Ltda",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900005000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900005000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900005000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900005000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900005000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900005000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900006000": {
+    "nome_grupo_economico": "Zeta Agroindustrial S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900006000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900006000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900006000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900006000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900006000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900006000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Zeta Regional 1",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900006001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900006001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900006001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900006001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Zeta Regional 2",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900006002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900006002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900006002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900006002"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Zeta Regional 3",
+        "codigo_grupo_cliente_atacado": 3,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900006003",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900006003"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900006003",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900006003"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Zeta Regional 4",
+        "codigo_grupo_cliente_atacado": 4,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900006004",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900006004"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900006004",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900006004"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900007000": {
+    "nome_grupo_economico": "Eta Serviços Financeiros S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900007000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900007000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900007000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900007000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900007000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900007000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Eta Crédito",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900007001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900007001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900007001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900007001"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900008000": {
+    "nome_grupo_economico": "Theta Engenharia e Construção S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900008000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900008000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900008000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900008000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900008000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900008000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900009000": {
+    "nome_grupo_economico": "Iota Mineração S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900009000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900009000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900009000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900009000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900009000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900009000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900010000": {
+    "nome_grupo_economico": "Capa Logística Integrada S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900010000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900010000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900010000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900010000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900010000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900010000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900011000": {
+    "nome_grupo_economico": "Lambda Farmacêutica S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900011000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900011000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900011000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900011000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900011000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900011000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900012000": {
+    "nome_grupo_economico": "Mu Alimentos e Bebidas S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900012000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900012000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900012000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900012000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900012000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900012000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900013000": {
+    "nome_grupo_economico": "Nu Energia Renovável S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900013000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900013000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900013000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900013000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900013000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900013000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900014000": {
+    "nome_grupo_economico": "Csi Papelaria e Escritório Ltda",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900014000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900014000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900014000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900014000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900014000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900014000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900015000": {
+    "nome_grupo_economico": "Ômicron Tecnologia da Informação S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900015000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900015000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900015000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900015000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900015000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900015000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900016000": {
+    "nome_grupo_economico": "Pi Transportes Rodoviários S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900016000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900016000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Pi Filial 1",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Pi Filial 2",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016002"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Pi Filial 3",
+        "codigo_grupo_cliente_atacado": 3,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016003",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016003"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016003",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016003"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Pi Filial 4",
+        "codigo_grupo_cliente_atacado": 4,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016004",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016004"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016004",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016004"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Pi Filial 5",
+        "codigo_grupo_cliente_atacado": 5,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900016005",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900016005"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900016005",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900016005"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900017000": {
+    "nome_grupo_economico": "Rho & Sigma Participações S.A. (Grupo \"Confiança\")",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900017000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900017000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900017000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900017000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900017000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900017000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900018000": {
+    "nome_grupo_economico": "Tau Distribuidora Nacional S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900018000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900018000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900018000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900018000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900018000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900018000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Tau Norte",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900018001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900018001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900018001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900018001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Tau Sul",
+        "codigo_grupo_cliente_atacado": 2,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900018002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900018002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900018002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900018002"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Tau Sul Filial",
+        "codigo_grupo_cliente_atacado": 3,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900018002",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900018002"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900018002",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900018002"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900019000": {
+    "nome_grupo_economico": "Upsilon Metalurgia S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900019000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900019000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "MATRIZ",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900019000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900019000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900019000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900019000"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Upsilon Norte",
+        "codigo_grupo_cliente_atacado": 1,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900019001",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900019001"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900019001",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900019001"
+            }
+          }
+        ]
+      },
+      {
+        "nome_subgrupo": "Upsilon Espelho (não deve aparecer)",
+        "codigo_grupo_cliente_atacado": 99,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900019000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900019000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900019000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900019000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "900020000": {
+    "nome_grupo_economico": "Phi Varejo Digital S.A.",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "uuid-900020000",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "900020000"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "uuid-900020000",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "900020000"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "uuid-900020000",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "900020000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "050746577": {
+    "nome_grupo_economico": "COSAN S A",
+    "codigo_tipo_grupo_economico": "E",
+    "data_hora_atualizacao": "2026-07-03T10:37:28",
+    "numero_funcional_atualizacao": "987350376",
+    "texto_justificativa_atualizacao": "Sem Justificativa",
+    "cabeca_grupo": {
+      "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+      "codigo_tipo_pessoa": "J",
+      "indicador_estrangeiro": 0,
+      "documento_raiz": "050746577"
+    },
+    "subgrupos": [
+      {
+        "nome_subgrupo": "OUTROS",
+        "codigo_grupo_cliente_atacado": 0,
+        "cabeca_subgrupo": {
+          "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+          "codigo_tipo_pessoa": "J",
+          "indicador_estrangeiro": 0,
+          "documento_raiz": "050746577"
+        },
+        "participantes": [
+          {
+            "pessoa": {
+              "codigo_identificacao_pessoa": "1dd4580b-8d40-4ea7-b694-0eba343938a6",
+              "codigo_tipo_pessoa": "J",
+              "indicador_estrangeiro": 0,
+              "documento_raiz": "050746577"
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

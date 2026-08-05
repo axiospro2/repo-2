@@ -90,7 +90,7 @@ app.include_router(
 )  # SALVAR (POST /faturamento/{documento})
 app.include_router(
     router_buscar, prefix="/irb-cra-faturamento/v1"
-)  # BUSCAR (GET /faturamento/{documento}, /conglomerados/.../{subgr...
+)  # BUSCAR (GET /faturamento/{documento})
 
 # Entrypoint da AWS Lambda.
 handler = Mangum(app)

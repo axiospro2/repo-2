@@ -27,6 +27,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, Protocol
 
 from app.core.logging import get_logger, log_event
+from app.core.mascaramento import mascarar_documento
 from app.domain.models import Conglomerado, Faturamento, MarcadorFaturamento, Origem
 from app.domain.paginacao import alvos_do_conglomerado
 from app.domain.resolucao_marcador import resolver_marcador
@@ -37,7 +38,7 @@ __all__ = [
     "Endpoint",
     "Catalogo",
     "obter_faturamento",
-    "listar_subgrupos",
+    "buscar_grupos_economicos",
 ]
 
 _logger = get_logger("faturamento.buscar")
@@ -51,6 +52,7 @@ class Repositorio(Protocol):
 
 class NJ6(Protocol):
     def get_por_documento(self, documento: str) -> Conglomerado: ...
+    def buscar_grupos(self, termo: str) -> list[Conglomerado]: ...
 
 
 class Endpoint(Protocol):
@@ -105,33 +107,19 @@ def obter_faturamento(
     )
 
 
-def listar_subgrupos(documento: str, nj6: NJ6) -> Conglomerado:
-    """GET /conglomerados/{documento}/subgrupos — hierarquia crua do NJ6 (tabela de integrantes)."""
-    try:
-        log_event(_logger, "service.listar_subgrupos.inicio", level="debug", documento=documento)
-        cong = nj6.get_por_documento(documento)
-        log_event(
-            _logger,
-            "service.listar_subgrupos.sucesso",
-            level="debug",
-            documento=documento,
-            gtd_subgrupos=len(cong.subgrupos),
-            nome_grupo=cong.nome_grupo_economico,
-        )
-        return cong
-    except Exception as e:
-        _logger.exception(
-            "service.listar_subgrupos.erro",
-            extra={
-                "ctx": {
-                    "event": "service.listar_subgrupos.erro",
-                    "documento": documento,
-                    "tipo_erro": type(e).__name__,
-                    "mensagem": str(e),
-                }
-            },
-        )
-        raise
+def buscar_grupos_economicos(termo: str, nj6: NJ6) -> list[Conglomerado]:
+    """Busca "like" no NJ6 (autocomplete do front): dado um documento parcial, devolve
+    TODOS os grupos econômicos que batem (cabeça + subgrupos), sem resolver faturamento
+    nenhum — é só o passo de seleção antes do front chamar `GET /faturamento/{documento}`
+    com o documento exato escolhido."""
+    grupos = nj6.buscar_grupos(termo)
+    log_event(
+        _logger,
+        "faturamento.buscar_grupos.resolvido",
+        termo=mascarar_documento(termo),
+        qtd_grupos=len(grupos),
+    )
+    return grupos
 
 
 # —————— chamadas paralelas ao endpoint ——————

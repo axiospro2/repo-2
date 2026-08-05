@@ -29,7 +29,11 @@ Isso sobe:
 - `dynamodb-init` (roda uma vez, cria a tabela `tbcv4163_fatm_cogl_subg`, sai com status 0)
 - `mock-api` (porta **8080**), expondo:
   - `POST /oauth/token` — token OAuth2 fake (aceita qualquer client_id/secret)
-  - `GET /consulta-gruposeconomicos/v1/grupos-economicos` — NJ6 (fixture `nj6.json`)
+  - `GET /consulta-gruposeconomicos/v1/grupos-economicos` — NJ6 (fixture `nj6.json`).
+    Serve os dois usos do adapter (`app/src/app/adapters/nj6.py`): documento EXATO da
+    cabeça do conglomerado (1 resultado), documento EXATO de um SUBGRUPO (resolve pelo
+    grupo a que ele pertence) e documento PARCIAL/"like" (todos os grupos cujo documento
+    da cabeça começa com o termo — usado pelo `GET /grupos-economicos` do autocomplete).
   - `GET /gestaobalanco/v1/spreads-faturamento` — Endpoint/CRA (fixture `endpoint.json`)
 
 > **Parâmetros (faixas/moedas/limite de divergência) não são mockados aqui** — o serviço
@@ -88,12 +92,24 @@ testar.)
 
 ```bash
 curl http://localhost:8000/health
-curl http://localhost:8000/faturamento/050746577
+curl http://localhost:8000/irb-cra-faturamento/v1/faturamento/050746577
 ```
 
 O fluxo de BUSCAR deve: pegar token do mock → resolver conglomerado no NJ6 mock (CNPJ
 `050746577`, grupo "COSAN S A") → buscar spread no Endpoint mock → aplicar R1/R2/R3 →
 consultar DynamoDB local (vazio até você gravar algo com POST) → devolver o agregado.
+
+Pra testar o autocomplete (`GET /grupos-economicos`, busca "like"):
+
+```bash
+curl "http://localhost:8000/irb-cra-faturamento/v1/grupos-economicos?documento=9000"
+```
+
+Deve devolver os 20 grupos dos casos de `docs/CASOS_TESTE_MOCK.md` (todos com documento
+começando em `9000...`). Buscar pelo documento de um SUBGRUPO (não a cabeça), ex.
+`900002001` (Beta Norte), também deve resolver o conglomerado inteiro, igual buscar pela
+cabeça `900002000` — confirma que o mock trata subgrupo e cabeça do mesmo jeito que o NJ6
+real.
 
 ## Trocar os mocks depois
 

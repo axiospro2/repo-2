@@ -2,11 +2,6 @@
 
 Identidade = (conglomerado_doc, subgrupo_doc). Matriz = subgrupo cujo doc == doc do
 conglomerado. `id_spread` é procedência OPCIONAL (habilita o snapshot SPREAD#).
-
-Além do núcleo (fiel à decisão 24/06), o marcador carrega campos de PASSTHROUGH que a
-tela do CRA exibe na grade inferior (nome_spread, arquivo, status, categoria) e no cabeçalho
-(segmento, no agregado). São OPCIONAIS: só vêm preenchidos quando a origem os gravou — o
-serviço de Faturamento não os produz, apenas repassa (ver README, "campos de passthrough").
 """
 
 from __future__ import annotations
@@ -45,7 +40,8 @@ class InfoFaturamento:
     id_spread: Optional[str] = None  # spread que gerou este valor (procedência OPCIONAL)
     sistema_origem: Optional[str] = None  # CRA / Serasa / FactSet / agro...
     racf: Optional[str] = None  # quem informou (responsabilização) — vem no header do POST
-    nome_responsavel: Optional[str] = None  # nome de quem informou — vem no BODY do POST
+    auditoria: Optional[str] = None  # empresa auditora do balanço (KPMG, PWC, Deloitte, EY...)
+    valor_ativo: Optional[Decimal] = None  # valor do ativo informado junto ao faturamento
 
     @property
     def vazio(self) -> bool:
@@ -70,11 +66,6 @@ class MarcadorFaturamento:
     faturamento_cra: Optional[InfoFaturamento] = None
     sem_faturamento: bool = False  # analista escolheu "Não possuo o faturamento"
     justificativa: Optional[str] = None  # "Justifique/Explique o racional do faturamento"
-    # ────────── passthrough do CRA (grade inferior das telas 2/3) ──────────
-    nome_spread: Optional[str] = None  # "cenario_otimista_set2021"
-    arquivo: Optional[str] = None  # referência do balanço enviado
-    status: Optional[str] = None  # "rascunho" / workflow do CRA
-    categoria: Optional[str] = None  # "consolidado" (categoria do balanço)
     # ────────── controle do salvar / quarentena ──────────
     confirmado_divergencia: bool = False  # entrada do salvar: reenvio confirmando divergência
     quarentena: bool = False

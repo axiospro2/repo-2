@@ -9,11 +9,22 @@ from __future__ import annotations
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Optional
 
+from app.domain.faixa import multiplicador_unidade
 from app.domain.models import MarcadorFaturamento
 
 
 def _diferente(x: Optional[str], y: Optional[str]) -> bool:
     return x is not None and y is not None and x.upper() != y.upper()
+
+
+def _unidade_diferente(x: Optional[str], y: Optional[str]) -> bool:
+    """Compara pelo MULTIPLICADOR da unidade, não pela grafia — "milhoes"/"milhões" (com
+    ou sem acento) são a mesma unidade, não uma divergência. Some cair pra comparação de
+    string crua (`_diferente`) só quando alguma das duas não é uma unidade reconhecida."""
+    fx, fy = multiplicador_unidade(x), multiplicador_unidade(y)
+    if fx is not None and fy is not None:
+        return fx != fy
+    return _diferente(x, y)
 
 
 def avaliar(
@@ -44,7 +55,7 @@ def avaliar(
             {"tipo": "MOEDA", "subgrupoDoc": novo.subgrupo_doc, "de": b.moeda, "para": a.moeda}
         )
 
-    if _diferente(a.unidade, b.unidade):
+    if _unidade_diferente(a.unidade, b.unidade):
         out.append({
             "tipo": "UNIDADE",
             "subgrupoDoc": novo.subgrupo_doc,

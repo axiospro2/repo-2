@@ -1523,6 +1523,41 @@ flowchart TD
 > agregado dá a informação útil — quantos subgrupos vieram — em uma linha só, em
 > vez de N.
 
+### 7.5 Regras de `buscar_grupos` — busca "like" (autocomplete, `R-API-036`)
+
+> ### `R-NJ6-050` — `buscar_grupos` reaproveita a **mesma** requisição HTTP de `get_por_documento`
+> **Onde**: `HttpNJ6._requisitar_grupos_economicos()` — extraído de `get_por_documento`
+> pra ser chamado pelos dois métodos; só o tratamento do status/corpo da resposta diverge
+> depois (404 vira `NaoEncontrado` num, `[]` no outro).
+> **Por quê**: **(documentado, confirmado com o time)** é o **mesmo** endpoint NJ6
+> (`consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa=`), só que
+> `termo` pode ser um documento **parcial** — o NJ6 casa "como um LIKE" e devolve **todos**
+> os grupos que batem em `data[]`, em vez de 1 só.
+
+> ### `R-NJ6-051` — 404/sem match na busca "like" vira lista vazia, **nunca** `NaoEncontrado`
+> **Onde**: `if resp.status == 404: ... return []` em `buscar_grupos`.
+> **Por quê**: **(inferido)** assimetria deliberada com `get_por_documento`
+> (`R-NJ6-030` — 404 vira `NaoEncontrado`, `R-API-062` mapeia pra 404 HTTP): num
+> autocomplete, "nada bate ainda" é estado normal enquanto o usuário digita, não uma
+> condição de erro. Levantar exceção aqui faria o front tratar cada tecla digitada como
+> falha.
+
+> ### `R-NJ6-052` — `_map_grupos_lista` ignora itens de `data[]` sem `cabeca_grupo` (pessoa física solta)
+> **Onde**: `adapters/nj6.py::_map_grupos_lista` — `if "cabeca_grupo" not in item: continue`.
+> **Por quê**: **(documentado, confirmado com o PO)** a resposta real do NJ6 pra uma busca
+> "like" pode misturar grupos econômicos com itens soltos no formato `{"pessoa": {...}}`
+> (pessoa física sem grupo formado). A busca do front só lista conglomerado/subgrupo
+> (documento raiz) — esses itens soltos são descartados, não viram erro.
+
+> ### `R-NJ6-053` — Erro ao mapear **um** item de `data[]` descarta só aquele item, não a lista inteira
+> **Onde**: `try/except Exception` dentro do loop de `_map_grupos_lista` — loga
+> `nj6.map_grupos_lista.erro_item` com `idx` e **não** re-levanta.
+> **Por quê**: **(inferido)** assimetria deliberada com `R-NJ6-045` (mapeamento de 1
+> conglomerado é tudo-ou-nada): aqui a lista tem N candidatos independentes — 1 item
+> malformado não deveria esconder os outros 19 do autocomplete. O trade-off é o oposto do
+> `_map_conglomerado`: lá, uma carteira incompleta é pior que erro explícito; aqui, uma
+> lista de sugestões incompleta é melhor que nenhuma sugestão.
+
 ---
 
 ## 8. `R-END` — Regras do adapter Endpoint de Faturamento (Gestão Balanço)
@@ -4174,6 +4209,18 @@ flowchart LR
 > "log-and-rethrow", justificável aqui porque adiciona contexto que se perderia.
 > ⚠️ O ctx inclui `documento` **sem máscara** — ver `R-PEND-002`.
 
+> ### `R-BSC-053` — `buscar_grupos_economicos` é *passthrough* puro do `NJ6.buscar_grupos`, sem faturamento
+> **Onde**: `buscar_grupos_economicos(termo, nj6)` → chama só `nj6.buscar_grupos(termo)`,
+> devolve a lista de `Conglomerado` direto. Usado por `GET /grupos-economicos`
+> (`R-API-036`).
+> **Por quê**: **(inferido)** mesmo raciocínio de `R-BSC-050`/`R-BSC-051` — a busca
+> "like" (autocomplete) é seleção, não leitura de faturamento: não recebe `repo`,
+> `endpoint` nem `catalogo`, só o `Protocol NJ6` (que ganhou `buscar_grupos` além de
+> `get_por_documento`). Loga `faturamento.buscar_grupos.resolvido` com o termo
+> mascarado (`mascarar_documento`, `R-SEC`) e a quantidade de grupos — nunca o termo
+> cru, porque é um documento parcial (mesma regra de mascaramento de `R-SEC` aplicada
+> aqui, não só nos adapters HTTP).
+
 ---
 
 ## 19. `R-API` — Regras do boundary HTTP (rotas, DTOs, validação, erro→HTTP)
@@ -4311,6 +4358,23 @@ flowchart TD
 > integrações — um health que dependesse do DynamoDB reportaria "unhealthy" por
 > problema de terceiro e causaria reciclagem desnecessária.
 
+> ### `R-API-036` — `GET /grupos-economicos?documento=` é a busca "like" (autocomplete) que antecede o BUSCAR exato
+> **Onde**: `buscar_grupos()` em `api/routes_buscar.py` → `service_buscar.buscar_grupos_economicos()`
+> → `NJ6.buscar_grupos()`.
+> **Por quê**: **(documentado, decisão do PO)** a tela precisa deixar o analista
+> digitar um documento parcial e escolher o grupo antes de abrir a tela de
+> faturamento — reaproveita a **mesma** chamada HTTP do NJ6 usada por
+> `get_por_documento` (`R-NJ6`), só que interpretando `data[]` como lista completa em
+> vez de pegar só o primeiro item. Só uma dependência (`nj6`, via `Depends`) — **não**
+> toca `repo`/`endpoint`/`catalogo`, porque não resolve faturamento nenhum, só a
+> hierarquia (cabeça + subgrupos) pra seleção. `documento` usa o **mesmo** `DOCUMENTO_PATTERN`
+> (`R-API-001`) do BUSCAR exato, mas como **query param** (não path), porque o termo pode
+> ter qualquer tamanho parcial. Itens soltos de pessoa física sem grupo (sem `cabeca_grupo`
+> no `data[]` do NJ6) são descartados no mapeamento (`_map_grupos_lista`,
+> `adapters/nj6.py`) — a tela só lista conglomerado/subgrupo, não participante avulso. Sem
+> match não é erro: 404 do NJ6 vira lista vazia (`{"grupos": []}`), nunca `NaoEncontrado`
+> — autocomplete "ainda sem resultado" é estado normal enquanto o usuário digita.
+
 ```mermaid
 flowchart TD
     A["FastAPI app"] --> B["/health — sem prefixo, fora do schema<br/>{status: ok} estático"]
@@ -4318,6 +4382,7 @@ flowchart TD
     C --> D["POST /faturamento/{documento} → 201"]
     C --> E["GET /faturamento/{documento}"]
     C --> F["GET /conglomerados/{documento}/subgrupos"]
+    C --> G["GET /grupos-economicos?documento= (busca like, autocomplete)"]
 ```
 
 ### 19.4 Regras dos DTOs de entrada (Pydantic)
@@ -5086,7 +5151,7 @@ flowchart TD
 
 ## 22. Índice de navegação
 
-**427 regras** catalogadas em 21 áreas, com **120 diagramas** Mermaid.
+**433 regras** catalogadas em 21 áreas, com **120 diagramas** Mermaid.
 
 ### 22.1 Por área
 
@@ -5098,7 +5163,7 @@ flowchart TD
 | [4](#4-r-sec--regras-de-segurança-lgpd-e-tls) | `R-SEC` — Segurança/LGPD/TLS | 14 | `core/mascaramento.py`, `core/ssl_context.py` |
 | [5](#5-r-aut--regras-de-autenticação-m2m-oauth2-client_credentials) | `R-AUT` — Auth M2M | 20 | `core/oauth2.py`, `adapters/auth.py` |
 | [6](#6-r-http--regras-de-transporte-http-pool-de-conexões-e-retry) | `R-HTTP` — Transporte/retry | 13 | `core/http_client.py`, `core/retry.py` |
-| [7](#7-r-nj6--regras-do-adapter-nj6-hierarquia-de-grupos-econômicos) | `R-NJ6` — Adapter NJ6 | 23 | `adapters/nj6.py` |
+| [7](#7-r-nj6--regras-do-adapter-nj6-hierarquia-de-grupos-econômicos) | `R-NJ6` — Adapter NJ6 | 27 | `adapters/nj6.py` |
 | [8](#8-r-end--regras-do-adapter-endpoint-de-faturamento-gestão-balanço) | `R-END` — Adapter Endpoint | 14 | `adapters/endpoint.py` |
 | [9](#9-r-prm--regras-do-serviço-de-parâmetros-catálogo-gate-e-cache) | `R-PRM` — Parâmetros/cache | 20 | `adapters/parametros.py` |
 | [10](#10-r-dyn--regras-de-persistência-dynamodb) | `R-DYN` — Persistência | 21 | `adapters/repository.py` |
@@ -5109,8 +5174,8 @@ flowchart TD
 | [15](#15-r-pag--regras-de-seleção-de-alvos-matriz--subgrupos-sem-paginação) | `R-PAG` — Seleção de alvos (sem paginação) | 4 | `domain/paginacao.py` |
 | [16](#16-r-res--regras-de-resolução-de-um-marcador-banco--endpoint--manual) | `R-RES` — Resolução (banco sempre vence) | 20 | `domain/resolucao_marcador.py` |
 | [17](#17-r-slv--regras-do-fluxo-salvar-domainservicepy) | `R-SLV` — Fluxo SALVAR (sem metadados) | 27 | `domain/service.py` |
-| [18](#18-r-bsc--regras-do-fluxo-buscar-domainservice_buscarpy) | `R-BSC` — Fluxo BUSCAR | 17 | `domain/service_buscar.py` |
-| [19](#19-r-api--regras-do-boundary-http-rotas-dtos-validação-errohttp) | `R-API` — Boundary HTTP | 39 | `api/*` |
+| [18](#18-r-bsc--regras-do-fluxo-buscar-domainservice_buscarpy) | `R-BSC` — Fluxo BUSCAR | 18 | `domain/service_buscar.py` |
+| [19](#19-r-api--regras-do-boundary-http-rotas-dtos-validação-errohttp) | `R-API` — Boundary HTTP | 40 | `api/*` |
 | [20](#20-r-di--regras-de-injeção-de-dependência-e-ciclo-de-vida-da-lambda) | `R-DI` — DI/ciclo de vida | 7 | `api/deps.py`, `main.py` |
 | [21](#21-pendências-contradições-e-riscos-conhecidos) | `R-PEND` — Pendências | 15 | (vários) |
 

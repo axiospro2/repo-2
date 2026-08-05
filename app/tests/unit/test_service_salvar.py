@@ -161,17 +161,3 @@ def test_gate_ativo_sem_registro_existente_nao_bloqueia():
     repo = FakeRepositorio()
     resultado = service.salvar(_fat(), repo, _params(gate_ativo=True, limite=30))
     assert resultado.marcadores[0].atual.valor == Decimal("5000000")
-
-
-def test_salvar_persiste_nome_responsavel_carimbado_no_atual():
-    repo = FakeRepositorio()
-    marcador = MarcadorFaturamento(
-        conglomerado_doc=CONGLOMERADO_DOC,
-        subgrupo_doc=CONGLOMERADO_DOC,
-        atual=InfoFaturamento(
-            valor=Decimal("5000000"), moeda="BRL", unidade="unitario", nome_responsavel="Alice"
-        ),
-    )
-    fat = Faturamento(conglomerado_doc=CONGLOMERADO_DOC, marcadores=[marcador])
-    resultado = service.salvar(fat, repo, _params())
-    assert resultado.marcadores[0].atual.nome_responsavel == "Alice"

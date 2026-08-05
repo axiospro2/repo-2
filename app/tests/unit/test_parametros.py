@@ -25,6 +25,7 @@ def test_client_com_defaults():
     assert cliente._ttl == 300
     assert cliente._key_faixas == "catalogo-faixas"
     assert cliente._key_moedas == "catalogo-moedas"
+    assert cliente._key_auditorias == "catalogo-auditorias"
     assert cliente._key_limite_divergencia == "limite-Maximo-Divergencia-Porcentagem"
 
 
@@ -35,12 +36,14 @@ def test_client_com_parametros_customizados():
         ttl_s=600,
         key_faixas="custom.faixas",
         key_moedas="custom.moedas",
+        key_auditorias="custom.auditorias",
         key_limite_divergencia="custom.limite",
     )
     assert cliente._app_name == "CustomApp"
     assert cliente._ttl == 600
     assert cliente._key_faixas == "custom.faixas"
     assert cliente._key_moedas == "custom.moedas"
+    assert cliente._key_auditorias == "custom.auditorias"
     assert cliente._key_limite_divergencia == "custom.limite"
 
 
@@ -48,6 +51,7 @@ def test_catalogo_com_defaults():
     catalogo = ParametrosCatalogo(cluster_members="test-cluster:5701")
     assert catalogo._key_faixas == "catalogo-faixas"
     assert catalogo._key_moedas == "catalogo-moedas"
+    assert catalogo._key_auditorias == "catalogo-auditorias"
 
 
 # ─────────── _inicializar_servico ───────────
@@ -115,6 +119,7 @@ def test_client_obter_monta_snapshot_completo(mock_config_service_class, mock_co
     mock_service.get_config_for_app.side_effect = [
         json.dumps([{"codigo": "FAIXA_1", "descricao": "d", "min": 0, "max": 1000}]),
         json.dumps(["BRL"]),
+        json.dumps(["KPMG"]),
         "30",
     ]
     mock_config_service_class.return_value = mock_service
@@ -125,6 +130,7 @@ def test_client_obter_monta_snapshot_completo(mock_config_service_class, mock_co
     assert snapshot["limiteVariacaoPercentual"] == 30
     assert snapshot["faixas"][0]["codigo"] == "FAIXA_1"
     assert snapshot["moedas"] == ["BRL"]
+    assert snapshot["auditorias"] == ["KPMG"]
 
 
 @patch("app.adapters.parametros.QuickConfigConfigurationSource")
@@ -133,7 +139,7 @@ def test_client_gate_sempre_ativo_mesmo_com_limite_zero(
     mock_config_service_class, mock_config_source
 ):
     mock_service = MagicMock()
-    mock_service.get_config_for_app.side_effect = ["[]", "[]", "0"]
+    mock_service.get_config_for_app.side_effect = ["[]", "[]", "[]", "0"]
     mock_config_service_class.return_value = mock_service
 
     snapshot = ParametrosClient(cluster_members="test-cluster:5701").obter()
@@ -148,6 +154,7 @@ def test_client_segunda_chamada_usa_cache(mock_config_service_class, mock_config
     mock_service.get_config_for_app.side_effect = [
         json.dumps([{"codigo": "FAIXA_1", "descricao": "d", "min": 0, "max": 1000}]),
         json.dumps(["BRL"]),
+        json.dumps(["KPMG"]),
         "30",
     ]
     mock_config_service_class.return_value = mock_service
@@ -157,21 +164,21 @@ def test_client_segunda_chamada_usa_cache(mock_config_service_class, mock_config
     resultado2 = cliente.obter()
 
     assert resultado1 == resultado2
-    assert mock_service.get_config_for_app.call_count == 3  # só a 1ª chamada buscou
+    assert mock_service.get_config_for_app.call_count == 4  # só a 1ª chamada buscou
 
 
 @patch("app.adapters.parametros.QuickConfigConfigurationSource")
 @patch("app.adapters.parametros.ConfigurationService")
 def test_client_cache_expirado_busca_de_novo(mock_config_service_class, mock_config_source):
     mock_service = MagicMock()
-    mock_service.get_config_for_app.side_effect = ["[]", "[]", "30"] * 2
+    mock_service.get_config_for_app.side_effect = ["[]", "[]", "[]", "30"] * 2
     mock_config_service_class.return_value = mock_service
 
     cliente = ParametrosClient(cluster_members="test-cluster:5701", ttl_s=0)
     cliente.obter()
     cliente.obter()
 
-    assert mock_service.get_config_for_app.call_count == 6
+    assert mock_service.get_config_for_app.call_count == 8
 
 
 def test_client_fallback_quando_quickconfig_indisponivel():
@@ -181,9 +188,26 @@ def test_client_fallback_quando_quickconfig_indisponivel():
 
     assert snapshot["gateDivergenciaAtivo"] is True
     assert snapshot["limiteVariacaoPercentual"] == 30
-    assert len(snapshot["faixas"]) == 6
-    assert snapshot["faixas"][0]["codigo"] == "FAIXA_1"
-    assert snapshot["moedas"] == ["BRL", "USD"]
+    assert len(snapshot["faixas"]) == 11
+    assert snapshot["faixas"][0]["codigo"] == "ate_360_mil"
+    assert snapshot["moedas"] == [
+        "USD",
+        "EUR",
+        "BRL",
+        "AFN",
+        "ARS",
+        "AUD",
+        "CAD",
+        "CHF",
+        "CLP",
+        "CNY",
+    ]
+    assert snapshot["auditorias"] == [
+        "KPMG",
+        "PWC (Price Waterhouse Coopers)",
+        "Deloitte",
+        "EY (Ernst & Young)",
+    ]
 
 
 @patch("app.adapters.parametros.QuickConfigConfigurationSource")
@@ -199,11 +223,12 @@ def test_client_fallback_nao_e_cacheado(mock_config_service_class, mock_config_s
     mock_service.get_config_for_app.side_effect = [
         json.dumps([{"codigo": "FAIXA_1", "descricao": "d", "min": 0, "max": 1000}]),
         json.dumps(["BRL"]),
+        json.dumps(["KPMG"]),
         "30",
     ]
     segundo = cliente.obter()
 
-    assert len(primeiro["faixas"]) == 6  # fallback
+    assert len(primeiro["faixas"]) == 11  # fallback
     assert segundo["faixas"][0]["codigo"] == "FAIXA_1"  # 2ª tentativa buscou de novo
 
 
@@ -212,11 +237,14 @@ def test_client_fallback_nao_e_cacheado(mock_config_service_class, mock_config_s
 
 @patch("app.adapters.parametros.QuickConfigConfigurationSource")
 @patch("app.adapters.parametros.ConfigurationService")
-def test_catalogo_obter_so_faixas_e_moedas(mock_config_service_class, mock_config_source):
+def test_catalogo_obter_so_faixas_moedas_e_auditorias(
+    mock_config_service_class, mock_config_source
+):
     mock_service = MagicMock()
     mock_service.get_config_for_app.side_effect = [
         json.dumps([{"codigo": "FAIXA_1", "descricao": "d", "min": 0, "max": 1000}]),
         json.dumps(["BRL"]),
+        json.dumps(["KPMG"]),
     ]
     mock_config_service_class.return_value = mock_service
 
@@ -225,14 +253,27 @@ def test_catalogo_obter_so_faixas_e_moedas(mock_config_service_class, mock_confi
     assert snapshot == {
         "faixas": [{"codigo": "FAIXA_1", "descricao": "d", "min": 0, "max": 1000}],
         "moedas": ["BRL"],
+        "auditorias": ["KPMG"],
     }
 
 
 def test_catalogo_fallback_quando_quickconfig_indisponivel():
     snapshot = ParametrosCatalogo(cluster_members="").obter()
 
-    assert len(snapshot["faixas"]) == 6
-    assert snapshot["moedas"] == ["BRL", "USD"]
+    assert len(snapshot["faixas"]) == 11
+    assert snapshot["moedas"] == [
+        "USD",
+        "EUR",
+        "BRL",
+        "AFN",
+        "ARS",
+        "AUD",
+        "CAD",
+        "CHF",
+        "CLP",
+        "CNY",
+    ]
+    assert len(snapshot["auditorias"]) == 4
 
 
 # ───────── base abstrata ─────────

@@ -34,7 +34,7 @@ flowchart TD
     Lambda --> FastAPI["FastAPI app\n(main.py)"]
 
     FastAPI --> RoutesSalvar["api/routes.py\nPOST /faturamento/{documento}"]
-    FastAPI --> RoutesBuscar["api/routes_buscar.py\nGET /faturamento/{documento}\nGET /conglomerados/{documento}/subgrupos"]
+    FastAPI --> RoutesBuscar["api/routes_buscar.py\nGET /faturamento/{documento}\nGET /conglomerados/{documento}/subgrupos\nGET /grupos-economicos?documento= (busca like)"]
 
     RoutesSalvar --> Schemas["api/schemas.py\n(DTOs camelCase)"]
     RoutesBuscar --> Schemas
@@ -193,6 +193,7 @@ classDiagram
     class NJ6Protocol {
         <<Protocol>>
         +get_por_documento(documento) Conglomerado
+        +buscar_grupos(termo) list~Conglomerado~
     }
     class EndpointProtocol {
         <<Protocol>>
@@ -215,6 +216,7 @@ classDiagram
     }
     class HttpNJ6 {
         +get_por_documento(documento)
+        +buscar_grupos(termo)
     }
     class HttpEndpoint {
         +buscar(documento_raiz, asof)

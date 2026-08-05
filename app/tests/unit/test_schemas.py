@@ -1,20 +1,17 @@
 from decimal import Decimal
 
-import pytest
-
 from app.api.schemas import (
     FaturamentoRequest,
     InfoIn,
     MarcadorIn,
-    conglomerado_out,
     faturamento_out,
+    grupos_out,
 )
 from app.domain.models import (
     Conglomerado,
     Faturamento,
     InfoFaturamento,
     MarcadorFaturamento,
-    Pessoa,
     Subgrupo,
 )
 
@@ -39,7 +36,6 @@ def test_to_domain_usa_documento_do_path_quando_body_nao_informa():
 
 def test_to_domain_mapeia_marcador_completo_com_racf_e_cra():
     req = FaturamentoRequest(
-        nomeResponsavel="Alice Ramos Paiva",
         marcadores=[
             MarcadorIn(
                 subgrupoDoc=SDOC,
@@ -54,11 +50,30 @@ def test_to_domain_mapeia_marcador_completo_com_racf_e_cra():
     m = fat.marcadores[0]
     assert m.conglomerado_doc == CDOC
     assert m.atual.racf == "r-fulano"
-    assert m.atual.nome_responsavel == "Alice Ramos Paiva"
     assert m.atual.id_spread == "123"  # id_spread do marcador tem prioridade
     assert m.faturamento_cra is not None
     assert m.faturamento_cra.valor == Decimal("50")
     assert m.confirmado_divergencia is True
+
+
+def test_to_domain_mapeia_auditoria_e_valor_ativo():
+    req = FaturamentoRequest(
+        marcadores=[
+            MarcadorIn(
+                subgrupoDoc=SDOC,
+                atual=InfoIn(
+                    valor=Decimal("100"),
+                    moeda="BRL",
+                    auditoria="Deloitte",
+                    valorAtivo=Decimal("50000"),
+                ),
+            )
+        ],
+    )
+    fat = req.to_domain(CDOC)
+    m = fat.marcadores[0]
+    assert m.atual.auditoria == "Deloitte"
+    assert m.atual.valor_ativo == Decimal("50000")
 
 
 def test_to_domain_sem_faturamento_cra_fica_none():
@@ -79,12 +94,6 @@ def test_to_domain_unidade_default_milhoes_quando_ausente():
     req = FaturamentoRequest(marcadores=[MarcadorIn(subgrupoDoc=SDOC, atual=InfoIn())])
     fat = req.to_domain(CDOC)
     assert fat.marcadores[0].atual.unidade == "milhoes"
-
-
-def test_to_domain_sem_nome_responsavel_fica_none():
-    req = FaturamentoRequest(marcadores=[MarcadorIn(subgrupoDoc=SDOC)])
-    fat = req.to_domain(CDOC)
-    assert fat.marcadores[0].atual.nome_responsavel is None
 
 
 # ─────────── faturamento_out ───────────
@@ -119,21 +128,6 @@ def test_faturamento_out_sem_paginacao_no_envelope():
     assert "paginacao" not in out
 
 
-def test_faturamento_out_inclui_nome_responsavel():
-    fat = Faturamento(
-        conglomerado_doc=CDOC,
-        marcadores=[
-            MarcadorFaturamento(
-                conglomerado_doc=CDOC,
-                subgrupo_doc=SDOC,
-                atual=InfoFaturamento(nome_responsavel="Carlos Alberto Silva"),
-            )
-        ],
-    )
-    out = faturamento_out(fat, persistido=True)
-    assert out["marcadores"][0]["atual"]["nomeResponsavel"] == "Carlos Alberto Silva"
-
-
 def test_faturamento_out_marcador_sem_atual_nem_cra():
     fat = Faturamento(
         conglomerado_doc=CDOC,
@@ -141,58 +135,49 @@ def test_faturamento_out_marcador_sem_atual_nem_cra():
     )
     out = faturamento_out(fat, persistido=True)
     assert out["marcadores"][0]["atual"] is None
-    assert out["marcadores"][0]["faturamentoCra"] is None
 
 
-# ─────────── conglomerado_out ───────────
+def test_faturamento_out_inclui_racf_auditoria_e_valor_ativo():
+    """`racf` volta na API — é o que a tela usa como coluna "Atualizado por" (não é nome)."""
+    fat = Faturamento(
+        conglomerado_doc=CDOC,
+        marcadores=[
+            MarcadorFaturamento(
+                conglomerado_doc=CDOC,
+                subgrupo_doc=SDOC,
+                atual=InfoFaturamento(
+                    racf="r123456", auditoria="KPMG", valor_ativo=Decimal("900000")
+                ),
+            )
+        ],
+    )
+    out = faturamento_out(fat, persistido=True)
+    atual = out["marcadores"][0]["atual"]
+    assert atual["racf"] == "r123456"
+    assert atual["auditoria"] == "KPMG"
+    assert atual["valorAtivo"] == "900000"
 
 
-def test_conglomerado_out_sucesso():
-    cong = Conglomerado(
-        nome_grupo_economico="Grupo X",
+# ─────────── grupos_out ───────────
+
+
+def test_grupos_out_lista_vazia():
+    assert grupos_out([]) == {"grupos": []}
+
+
+def test_grupos_out_mapeia_cabeca_e_subgrupos_sem_participantes():
+    grupo = Conglomerado(
+        nome_grupo_economico="Grupo Teste",
         cabeca_documento_raiz=CDOC,
         segmento="Indústria",
-        subgrupos=[
-            Subgrupo(
-                nome_subgrupo="Sub A",
-                cabeca_documento_raiz=SDOC,
-                codigo_grupo_cliente_atacado="0",
-                participantes=[Pessoa(codigo_identificacao_pessoa="p1", documento_raiz=SDOC)],
-            )
-        ],
+        subgrupos=[Subgrupo(nome_subgrupo="OUTROS", cabeca_documento_raiz="999")],
     )
-    out = conglomerado_out(cong)
-    assert out["nomeGrupoEconomico"] == "Grupo X"
-    assert out["segmento"] == "Indústria"
-    assert len(out["subgrupos"]) == 1
-    assert out["subgrupos"][0]["participantes"][0]["documentoRaiz"] == SDOC
-
-
-def test_conglomerado_out_sem_subgrupos():
-    cong = Conglomerado(nome_grupo_economico="Grupo Y", cabeca_documento_raiz=CDOC)
-    out = conglomerado_out(cong)
-    assert out["subgrupos"] == []
-
-
-def test_conglomerado_out_erro_por_subgrupo_propaga():
-    cong = Conglomerado(
-        nome_grupo_economico="Grupo Z",
-        cabeca_documento_raiz=CDOC,
-        subgrupos=[
-            Subgrupo(
-                nome_subgrupo="Sub Quebrado",
-                cabeca_documento_raiz=SDOC,
-                participantes=["nao-e-uma-pessoa"],  # falta .documento_raiz etc.
-            )
-        ],
-    )
-    with pytest.raises(AttributeError):
-        conglomerado_out(cong)
-
-
-def test_conglomerado_out_erro_fatal_propaga():
-    class CongQuebrado:
-        pass  # sem atributo `subgrupos`
-
-    with pytest.raises(AttributeError):
-        conglomerado_out(CongQuebrado())
+    out = grupos_out([grupo])
+    assert out == {
+        "grupos": [{
+            "nomeGrupoEconomico": "Grupo Teste",
+            "conglomeradoDoc": CDOC,
+            "segmento": "Indústria",
+            "subgrupos": [{"nome": "OUTROS", "documento": "999"}],
+        }]
+    }

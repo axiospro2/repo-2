@@ -135,6 +135,37 @@ sequenceDiagram
     end
 ```
 
+## 3.1 Fluxo BUSCAR GRUPOS (autocomplete "like", `GET /grupos-economicos`)
+
+Passo **anterior** ao fluxo BUSCAR acima: o analista digita um documento parcial na
+tela, escolhe um grupo na lista, e só então a tela chama `GET /faturamento/{documento}`
+com o documento exato escolhido. Não resolve faturamento nenhum — é só a hierarquia do
+NJ6 (cabeça + subgrupos) pra seleção.
+
+```mermaid
+sequenceDiagram
+    participant Tela
+    participant APIGW as API Gateway
+    participant Route as api/routes_buscar.py
+    participant Svc as domain/service_buscar.py
+    participant NJ6 as adapters/nj6.py
+
+    Tela->>APIGW: GET /grupos-economicos?documento={termo parcial}
+    APIGW->>Route: evento proxy
+    Route->>Svc: buscar_grupos_economicos(termo, nj6)
+    Svc->>NJ6: buscar_grupos(termo)
+    Note over NJ6: mesma requisição HTTP de get_por_documento<br/>(mesmo endpoint NJ6), token via STS
+    alt NJ6 acha 1+ grupos que batem
+        NJ6-->>Svc: list[Conglomerado] (data[] inteiro, não só o 1º item)
+    else NJ6 devolve 404 (nada bate ainda)
+        NJ6-->>Svc: [] (nunca levanta NaoEncontrado aqui)
+    end
+    Svc-->>Route: list[Conglomerado]
+    Route-->>Tela: 200 + grupos_out (nomeGrupoEconomico, conglomeradoDoc, subgrupos)
+    Tela->>Tela: analista escolhe um item do dropdown
+    Tela->>APIGW: GET /faturamento/{conglomeradoDoc escolhido}<br/>(fluxo BUSCAR normal, seção 3)
+```
+
 ## 4. Autenticação OAuth2 (STS) — compartilhada pelos 3 adapters HTTP
 
 Genérico: `adapters/nj6.py`, `adapters/endpoint.py` e `adapters/parametros.py`

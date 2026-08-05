@@ -26,14 +26,27 @@ from app.core.settings import settings
 _logger = get_logger("faturamento.parametros")
 
 _FAIXAS_FALLBACK: list[dict] = [
-    {"codigo": "FAIXA_1", "descricao": "R$ 360 mil a R$ 4,8 MM", "min": 360000, "max": 4800000},
-    {"codigo": "FAIXA_2", "descricao": "R$ 4,8 MM a R$ 20 MM", "min": 4800000, "max": 20000000},
-    {"codigo": "FAIXA_3", "descricao": "R$ 20 MM a R$ 100 MM", "min": 20000000, "max": 100000000},
-    {"codigo": "FAIXA_4", "descricao": "R$ 100 MM a R$ 500 MM", "min": 100000000, "max": 500000000},
-    {"codigo": "FAIXA_5", "descricao": "R$ 500 MM a R$ 2 BI", "min": 500000000, "max": 2000000000},
-    {"codigo": "FAIXA_6", "descricao": "Acima de R$ 2 BI", "min": 2000000000, "max": None},
+    {"codigo": "ate_360_mil", "descricao": "Até 360 Mil", "min": 0, "max": 360000},
+    {"codigo": "360_mil_4_8_mm", "descricao": "360 mil a 4,8 MM", "min": 360000, "max": 4800000},
+    {"codigo": "4_8_mm_20_mm", "descricao": "4,8 MM a 20 MM", "min": 4800000, "max": 20000000},
+    {"codigo": "20_mm_125_mm", "descricao": "20 MM a 125 MM", "min": 20000000, "max": 125000000},
+    {"codigo": "125_mm_300_mm", "descricao": "125 MM a 300 MM", "min": 125000000, "max": 300000000},
+    {"codigo": "300_mm_500_mm", "descricao": "300 MM a 500 MM", "min": 300000000, "max": 500000000},
+    {"codigo": "500_mm_1_bi", "descricao": "500 MM a 1 Bi", "min": 500000000, "max": 1000000000},
+    {"codigo": "1_bi_2_5_bi", "descricao": "1 Bi a 2,5 Bi", "min": 1000000000, "max": 2500000000},
+    {"codigo": "2_5_bi_5_bi", "descricao": "2,5 Bi a 5 Bi", "min": 2500000000, "max": 5000000000},
+    {"codigo": "5_bi_10_bi", "descricao": "5 Bi a 10 Bi", "min": 5000000000, "max": 10000000000},
+    {"codigo": "acima_10_bi", "descricao": "Acima de 10 Bi", "min": 10000000000, "max": None},
 ]
-_MOEDAS_FALLBACK: list[str] = ["BRL", "USD"]
+# Mesma lista do combo "moeda" do front (`faturamento.model.ts::MOEDAS`) — mantidas em
+# sincronia de propósito, senão o usuário escolhe uma moeda que a API rejeita.
+_MOEDAS_FALLBACK: list[str] = ["USD", "EUR", "BRL", "AFN", "ARS", "AUD", "CAD", "CHF", "CLP", "CNY"]
+_AUDITORIAS_FALLBACK: list[str] = [
+    "KPMG",
+    "PWC (Price Waterhouse Coopers)",
+    "Deloitte",
+    "EY (Ernst & Young)",
+]
 
 
 class _ClienteQuickConfig:
@@ -130,7 +143,7 @@ class _ClienteQuickConfig:
 
 
 class ParametrosClient(_ClienteQuickConfig):
-    """SALVAR — faixas + moedas + limite de variação (%). Gate sempre ativo."""
+    """SALVAR — faixas + moedas + auditorias + limite de variação (%). Gate sempre ativo."""
 
     def __init__(
         self,
@@ -139,11 +152,13 @@ class ParametrosClient(_ClienteQuickConfig):
         ttl_s: Optional[int] = None,
         key_faixas: Optional[str] = None,
         key_moedas: Optional[str] = None,
+        key_auditorias: Optional[str] = None,
         key_limite_divergencia: Optional[str] = None,
     ):
         super().__init__(cluster_members, app_name, ttl_s)
         self._key_faixas = key_faixas or settings.quickconfig_key_faixas
         self._key_moedas = key_moedas or settings.quickconfig_key_moedas
+        self._key_auditorias = key_auditorias or settings.quickconfig_key_auditorias
         self._key_limite_divergencia = (
             key_limite_divergencia or settings.quickconfig_key_limite_divergencia
         )
@@ -151,12 +166,14 @@ class ParametrosClient(_ClienteQuickConfig):
     def _buscar(self, service: ConfigurationService) -> dict:
         faixas_raw = service.get_config_for_app(self._app_name, self._key_faixas, "[]")
         moedas_raw = service.get_config_for_app(self._app_name, self._key_moedas, "[]")
+        auditorias_raw = service.get_config_for_app(self._app_name, self._key_auditorias, "[]")
         limite_raw = service.get_config_for_app(self._app_name, self._key_limite_divergencia, "0")
         return {
             "gateDivergenciaAtivo": True,
             "limiteVariacaoPercentual": int(self._parse_json(limite_raw, 0)),
             "faixas": self._parse_json(faixas_raw, []),
             "moedas": self._parse_json(moedas_raw, []),
+            "auditorias": self._parse_json(auditorias_raw, []),
         }
 
     def _fallback(self) -> dict:
@@ -166,6 +183,7 @@ class ParametrosClient(_ClienteQuickConfig):
             "limiteVariacaoPercentual": 30,
             "faixas": _FAIXAS_FALLBACK,
             "moedas": _MOEDAS_FALLBACK,
+            "auditorias": _AUDITORIAS_FALLBACK,
         }
 
 
@@ -179,19 +197,27 @@ class ParametrosCatalogo(_ClienteQuickConfig):
         ttl_s: Optional[int] = None,
         key_faixas: Optional[str] = None,
         key_moedas: Optional[str] = None,
+        key_auditorias: Optional[str] = None,
     ):
         super().__init__(cluster_members, app_name, ttl_s)
         self._key_faixas = key_faixas or settings.quickconfig_key_faixas
         self._key_moedas = key_moedas or settings.quickconfig_key_moedas
+        self._key_auditorias = key_auditorias or settings.quickconfig_key_auditorias
 
     def _buscar(self, service: ConfigurationService) -> dict:
         faixas_raw = service.get_config_for_app(self._app_name, self._key_faixas, "[]")
         moedas_raw = service.get_config_for_app(self._app_name, self._key_moedas, "[]")
+        auditorias_raw = service.get_config_for_app(self._app_name, self._key_auditorias, "[]")
         return {
             "faixas": self._parse_json(faixas_raw, []),
             "moedas": self._parse_json(moedas_raw, []),
+            "auditorias": self._parse_json(auditorias_raw, []),
         }
 
     def _fallback(self) -> dict:
         """Mock das faixas quando o QuickConfig está indisponível."""
-        return {"faixas": _FAIXAS_FALLBACK, "moedas": _MOEDAS_FALLBACK}
+        return {
+            "faixas": _FAIXAS_FALLBACK,
+            "moedas": _MOEDAS_FALLBACK,
+            "auditorias": _AUDITORIAS_FALLBACK,
+        }

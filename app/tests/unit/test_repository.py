@@ -48,6 +48,26 @@ def test_save_e_get_subgrupo_round_trip():
     assert salvo.atualizado_em == "2024-01-01"
 
 
+def test_save_e_get_subgrupo_round_trip_racf_auditoria_valor_ativo():
+    repo = _repo()
+    marcador = _marcador(
+        atual=InfoFaturamento(
+            valor=Decimal("500000"),
+            moeda="BRL",
+            racf="r123456",
+            auditoria="KPMG",
+            valor_ativo=Decimal("120000"),
+        )
+    )
+    fat = Faturamento(conglomerado_doc=CDOC, marcadores=[marcador], atualizado_em="2024-01-01")
+    repo.save(fat)
+
+    salvo = repo.get_subgrupo(CDOC, SDOC)
+    assert salvo.atual.racf == "r123456"
+    assert salvo.atual.auditoria == "KPMG"
+    assert salvo.atual.valor_ativo == Decimal("120000")
+
+
 def test_save_faz_roll_hoje_vira_ontem():
     repo = _repo()
     fat1 = Faturamento(

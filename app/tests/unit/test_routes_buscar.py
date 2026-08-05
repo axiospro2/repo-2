@@ -46,26 +46,49 @@ def test_buscar_faturamento_documento_invalido_422(api_app, api_client):
     assert resp.status_code == 422
 
 
-def test_buscar_subgrupos_sucesso(api_app, api_client):
-    cong = conglomerado_simples(CDOC, "Grupo Teste", [CDOC, "SUB2"])
-    api_app.dependency_overrides[deps.get_nj6] = lambda: FakeNJ6(cong)
+# ─────────── GET /grupos-economicos (busca "like") ───────────
 
-    resp = api_client.get(f"{PREFIXO}/conglomerados/{CDOC}/subgrupos")
+
+def test_buscar_grupos_economicos_sucesso(api_app, api_client):
+    grupo1 = conglomerado_simples("900001000", "Grupo Um", [])
+    grupo2 = conglomerado_simples("900002000", "Grupo Dois", ["900002001"])
+    api_app.dependency_overrides[deps.get_nj6] = lambda: FakeNJ6(grupo1, grupos=[grupo1, grupo2])
+
+    resp = api_client.get(f"{PREFIXO}/grupos-economicos", params={"documento": "9000"})
 
     assert resp.status_code == 200
     body = resp.json()
-    assert body["nomeGrupoEconomico"] == "Grupo Teste"
-    assert len(body["subgrupos"]) == 2
+    assert len(body["grupos"]) == 2
+    assert body["grupos"][0]["nomeGrupoEconomico"] == "Grupo Um"
+    assert body["grupos"][1]["subgrupos"] == [
+        {"nome": "Subgrupo 900002001", "documento": "900002001"}
+    ]
 
 
-def test_buscar_subgrupos_erro_no_nj6_propaga_como_500(api_app, api_client):
-    class NJ6Quebrado:
-        def get_por_documento(self, documento):
-            raise RuntimeError("NJ6 indisponível (simulado)")
+def test_buscar_grupos_economicos_sem_match_retorna_lista_vazia(api_app, api_client):
+    api_app.dependency_overrides[deps.get_nj6] = lambda: FakeNJ6(
+        conglomerado_simples(CDOC, "Grupo Teste", []), grupos=[]
+    )
 
-    api_app.dependency_overrides[deps.get_nj6] = lambda: NJ6Quebrado()
+    resp = api_client.get(f"{PREFIXO}/grupos-economicos", params={"documento": "999"})
 
-    resp = api_client.get(f"{PREFIXO}/conglomerados/{CDOC}/subgrupos")
+    assert resp.status_code == 200
+    assert resp.json() == {"grupos": []}
 
-    assert resp.status_code == 500
-    assert resp.json()["tipo"] == "RuntimeError"
+
+def test_buscar_grupos_economicos_documento_invalido_422(api_app, api_client):
+    api_app.dependency_overrides[deps.get_nj6] = lambda: FakeNJ6(
+        conglomerado_simples(CDOC, "Grupo Teste", [])
+    )
+
+    resp = api_client.get(f"{PREFIXO}/grupos-economicos", params={"documento": "abc"})
+    assert resp.status_code == 422
+
+
+def test_buscar_grupos_economicos_documento_ausente_422(api_app, api_client):
+    api_app.dependency_overrides[deps.get_nj6] = lambda: FakeNJ6(
+        conglomerado_simples(CDOC, "Grupo Teste", [])
+    )
+
+    resp = api_client.get(f"{PREFIXO}/grupos-economicos")
+    assert resp.status_code == 422

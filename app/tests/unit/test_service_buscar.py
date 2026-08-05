@@ -1,8 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 
-import pytest
-
 from app.domain import service_buscar as service
 from app.domain.eleicao import ResultadoFaturamento
 from app.domain.models import InfoFaturamento, MarcadorFaturamento, Nivel, Origem
@@ -25,6 +23,22 @@ def _marcador_base(doc: str, valor: Decimal, **overrides) -> MarcadorFaturamento
     )
     defaults.update(overrides)
     return MarcadorFaturamento(**defaults)
+
+
+def test_buscar_grupos_economicos_delega_pro_nj6_e_devolve_a_lista():
+    grupo1 = conglomerado_simples("900001000", "Grupo Um", [])
+    grupo2 = conglomerado_simples("900002000", "Grupo Dois", ["900002001"])
+    nj6 = FakeNJ6(grupo1, grupos=[grupo1, grupo2])
+
+    grupos = service.buscar_grupos_economicos("9000", nj6)
+
+    assert grupos == [grupo1, grupo2]
+
+
+def test_buscar_grupos_economicos_sem_match_devolve_lista_vazia():
+    nj6 = FakeNJ6(conglomerado_simples(CONGLOMERADO_DOC, "Grupo Teste", []), grupos=[])
+
+    assert service.buscar_grupos_economicos("999", nj6) == []
 
 
 class _EndpointContador:
@@ -181,22 +195,3 @@ def test_usa_o_catalogo_recebido_por_parametro_nao_a_classe_protocol():
     fat = service.obter_faturamento(CONGLOMERADO_DOC, repo, nj6, endpoint, catalogo)
 
     assert fat.marcadores[0].atual.faixa_descricao == "rotulo-do-teste"
-
-
-def test_listar_subgrupos_retorna_hierarquia_do_nj6():
-    cong = conglomerado_simples(CONGLOMERADO_DOC, "Grupo Teste", [CONGLOMERADO_DOC, "SUB2"])
-    nj6 = FakeNJ6(cong)
-
-    resultado = service.listar_subgrupos(CONGLOMERADO_DOC, nj6)
-
-    assert resultado.nome_grupo_economico == "Grupo Teste"
-    assert len(resultado.subgrupos) == 2
-
-
-def test_listar_subgrupos_propaga_erro_do_nj6():
-    class NJ6Quebrado:
-        def get_por_documento(self, documento):
-            raise RuntimeError("NJ6 indisponível (simulado)")
-
-    with pytest.raises(RuntimeError):
-        service.listar_subgrupos(CONGLOMERADO_DOC, NJ6Quebrado())

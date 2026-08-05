@@ -1,19 +1,25 @@
-"""Rotas do BUSCAR (mesma Lambda do salvar):
-  - GET /faturamento/{documento}              → read-through (base→endpoint→manual)
-  - GET /conglomerados/{documento}/subgrupos  → hierarquia crua do NJ6 (integrantes)
+"""Rota do BUSCAR (mesma Lambda do salvar):
+  - GET /faturamento/{documento}      → read-through (base→endpoint→manual), documento exato
+  - GET /grupos-economicos?documento= → busca "like" no NJ6 (autocomplete), documento parcial
 
-Tela única, sem abas e sem paginação (confirmado com o PO) — o GET de faturamento
-sempre devolve a matriz + todos os subgrupos numa lista só.
+Tela única, sem abas e sem paginação (confirmado com o PO) — o GET de faturamento sempre
+devolve a matriz + todos os subgrupos numa lista só, já resolvendo a hierarquia no NJ6 por
+dentro (`service.obter_faturamento`). Ele exige o documento EXATO (raiz do conglomerado).
+
+`GET /grupos-economicos` é o passo anterior: o front digita um documento parcial (o NJ6
+casa "como um LIKE"), essa rota devolve só a lista de grupos econômicos que batem
+(cabeça + subgrupos, sem faturamento nenhum) pra o analista escolher — depois disso o
+front chama `GET /faturamento/{documento}` com o documento exato escolhido.
 """
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends, Path, Query
 
 from app.adapters.parametros import ParametrosCatalogo
 from app.adapters.repository import DynamoRepository
 from app.api.deps import get_catalogo, get_endpoint, get_nj6, get_repo
-from app.api.schemas import conglomerado_out, faturamento_out
+from app.api.schemas import faturamento_out, grupos_out
 from app.api.validacao import DOCUMENTO_DESCRICAO, DOCUMENTO_PATTERN
 from app.core.logging import bind_context, get_logger, log_event
 from app.domain import service_buscar as service
@@ -39,33 +45,13 @@ def buscar(
     return faturamento_out(fat, persistido=persistido)
 
 
-@router.get("/conglomerados/{documento}/subgrupos")
-def subgrupos(
-    documento: str = Path(..., pattern=DOCUMENTO_PATTERN, description=DOCUMENTO_DESCRICAO),
+@router.get("/grupos-economicos")
+def buscar_grupos(
+    documento: str = Query(..., pattern=DOCUMENTO_PATTERN, description=DOCUMENTO_DESCRICAO),
     nj6=Depends(get_nj6),
 ) -> dict:
     bind_context(conglomerado_doc=documento)
-    log_event(_logger, "faturamento.subgrupos.recebido", level="info")
-    try:
-        cong = service.listar_subgrupos(documento, nj6)
-        log_event(
-            _logger,
-            "faturamento.subgrupos.resolvido",
-            level="info",
-            qtd_subgrupos=len(cong.subgrupos),
-            nome_grupo=cong.nome_grupo_economico,
-        )
-        return conglomerado_out(cong)
-    except Exception as e:
-        _logger.exception(
-            "faturamento.subgrupos.erro",
-            extra={
-                "ctx": {
-                    "event": "faturamento.subgrupos.erro",
-                    "tipo_erro": type(e).__name__,
-                    "mensagem": str(e),
-                    "documento": documento,
-                }
-            },
-        )
-        raise
+    log_event(_logger, "faturamento.buscar_grupos.recebido")
+
+    grupos = service.buscar_grupos_economicos(documento, nj6)
+    return grupos_out(grupos)

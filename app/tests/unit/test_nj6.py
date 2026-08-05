@@ -3,7 +3,7 @@ import json
 import pytest
 import urllib3
 
-from app.adapters.nj6 import HttpNJ6, _map_conglomerado
+from app.adapters.nj6 import HttpNJ6, _map_conglomerado, _map_grupos_lista
 from app.core.retry import ErroServidorIntegracao
 from app.domain.errors import NaoEncontrado
 from tests.http_fakes import FakePool, FakeResponse, FakeTokenProvider
@@ -142,3 +142,100 @@ def test_get_por_documento_erro_de_mapeamento_propaga(monkeypatch):
 
     with pytest.raises(KeyError):
         _nj6().get_por_documento("123")
+
+
+# ─────────── _map_grupos_lista (busca "like") ───────────
+
+RAW_LISTA_LIKE = {
+    "data": [
+        {
+            "nome_grupo_economico": "PESSOA 1 LTDA",
+            "cabeca_grupo": {"documento_raiz": "059274355"},
+            "subgrupos": [
+                {
+                    "nome_subgrupo": "PESSOA 1 LTDA",
+                    "cabeca_subgrupo": {"documento_raiz": "059274355"},
+                    "participantes": [],
+                },
+                {
+                    "nome_subgrupo": "OUTROS",
+                    "cabeca_subgrupo": {"documento_raiz": "050746577"},
+                    "participantes": [],
+                },
+            ],
+        },
+        # Pessoa física solta, sem grupo econômico (sem cabeca_grupo) — não deve virar Conglomerado.
+        {"pessoa": {"codigo_identificacao_pessoa": "abc", "documento_raiz": "044252269"}},
+        {
+            "nome_grupo_economico": "VICTOR HENRIQUE MOURA ROCHA",
+            "cabeca_grupo": {"documento_raiz": "053577744"},
+            "subgrupos": [{
+                "nome_subgrupo": "OUTROS",
+                "cabeca_subgrupo": {"documento_raiz": "053577744"},
+                "participantes": [],
+            }],
+        },
+    ]
+}
+
+
+def test_map_grupos_lista_mapeia_varios_grupos_ignorando_pessoa_solta():
+    grupos = _map_grupos_lista(RAW_LISTA_LIKE)
+    assert len(grupos) == 2
+    assert grupos[0].nome_grupo_economico == "PESSOA 1 LTDA"
+    assert grupos[0].cabeca_documento_raiz == "059274355"
+    assert [s.nome_subgrupo for s in grupos[0].subgrupos] == ["PESSOA 1 LTDA", "OUTROS"]
+    assert grupos[1].nome_grupo_economico == "VICTOR HENRIQUE MOURA ROCHA"
+
+
+def test_map_grupos_lista_sem_data_retorna_vazio():
+    assert _map_grupos_lista({}) == []
+
+
+def test_map_grupos_lista_item_malformado_nao_derruba_os_demais():
+    raw = {
+        "data": [
+            {"nome_grupo_economico": "OK", "cabeca_grupo": {"documento_raiz": "1"}},
+            {"cabeca_grupo": {"documento_raiz": "2"}},  # falta nome_grupo_economico -> KeyError
+        ]
+    }
+    grupos = _map_grupos_lista(raw)
+    assert len(grupos) == 1
+    assert grupos[0].nome_grupo_economico == "OK"
+
+
+# ─────────── HttpNJ6.buscar_grupos ───────────
+
+
+def test_buscar_grupos_sucesso_varios_resultados(monkeypatch):
+    pool = FakePool([FakeResponse(200, json.dumps(RAW_LISTA_LIKE).encode("utf-8"))])
+    _patch_pool(monkeypatch, pool)
+
+    grupos = _nj6().buscar_grupos("05")
+    assert len(grupos) == 2
+    assert "codigo_identificacao_pessoa=05" in pool.chamadas[0]["url"]
+
+
+def test_buscar_grupos_404_retorna_lista_vazia(monkeypatch):
+    pool = FakePool([FakeResponse(404, b"{}")])
+    _patch_pool(monkeypatch, pool)
+
+    assert _nj6().buscar_grupos("999") == []
+
+
+def test_buscar_grupos_4xx_nao_retentado(monkeypatch):
+    pool = FakePool([FakeResponse(400, b"erro cliente")])
+    _patch_pool(monkeypatch, pool)
+
+    with pytest.raises(RuntimeError):
+        _nj6().buscar_grupos("999")
+    assert len(pool.chamadas) == 1
+
+
+def test_buscar_grupos_5xx_esgota_retry(monkeypatch):
+    pool = FakePool([FakeResponse(500, b"erro")] * 3)
+    _patch_pool(monkeypatch, pool)
+
+    with pytest.raises(ErroServidorIntegracao):
+        _nj6().buscar_grupos("999")
+    assert len(pool.chamadas) == 3

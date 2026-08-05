@@ -21,23 +21,20 @@ def test_salvar_valor_dentro_de_faixa_conhecida_retorna_sucesso(client, prefixo,
     documento = _novo_documento_teste()
     corpo = {
         "conglomeradoDoc": documento,
-        "nomeResponsavel": "TAAC",
-        "marcadores": [
-            {
-                "subgrupoDoc": documento,
-                "nome": "TAAC",
-                # "500000" bate com o fallback hardcoded do adapter (FAIXA_1: 360 mil a
-                # 4,8 MM) — é o que roda local, sem cluster QuickConfig real. Ajuste pro
-                # catálogo real do QuickConfig ao rodar contra DEV/HML de verdade.
-                "atual": {"valor": "500000", "moeda": "BRL", "unidade": "unitario"},
-            }
-        ],
+        "marcadores": [{
+            "subgrupoDoc": documento,
+            "nome": "TAAC",
+            # "500000" bate com o fallback hardcoded do adapter (360_mil_4_8_mm: 360
+            # mil a 4,8 MM) — é o que roda local, sem cluster QuickConfig real. Ajuste
+            # pro catálogo real do QuickConfig ao rodar contra DEV/HML de verdade.
+            "atual": {"valor": "500000", "moeda": "BRL", "unidade": "unitario"},
+        }],
     }
     resp = _post_faturamento(client, prefixo, racf_teste, documento, corpo)
     assert resp.status_code == 201, resp.text
     body = resp.json()
     assert body["conglomeradoDoc"] == documento
-    assert body["marcadores"][0]["atual"]["nomeResponsavel"] == "TAAC"
+    assert body["marcadores"][0]["atual"]["racf"] == racf_teste
 
 
 def test_salvar_sem_nenhum_marcador_falha_com_422(client, prefixo, racf_teste):
@@ -57,13 +54,11 @@ def test_salvar_valor_fora_de_qualquer_faixa_falha_com_422(client, prefixo, racf
     documento = _novo_documento_teste()
     corpo = {
         "conglomeradoDoc": documento,
-        "marcadores": [
-            {
-                "subgrupoDoc": documento,
-                "nome": "TAAC",
-                "atual": {"valor": "-1", "moeda": "BRL", "unidade": "unitario"},
-            }
-        ],
+        "marcadores": [{
+            "subgrupoDoc": documento,
+            "nome": "TAAC",
+            "atual": {"valor": "-1", "moeda": "BRL", "unidade": "unitario"},
+        }],
     }
     resp = _post_faturamento(client, prefixo, racf_teste, documento, corpo)
     assert resp.status_code == 422

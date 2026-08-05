@@ -1,8 +1,8 @@
 {
-  "data": [
+  "900001000": [
     {
-      "codigo": 2097,
-      "nome": "Análise Anual 2024",
+      "codigo": 1001,
+      "nome": "Análise 1001",
       "etapa": null,
       "situacao": {
         "codigo": 3,
@@ -13,16 +13,16 @@
         "descricao": "Ativo"
       },
       "categoria": {
-        "codigo": 1,
-        "descricao": "Individual"
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
       },
       "unidade": {
         "codigo": "1",
         "descricao": "Mil",
         "valor": 1000
       },
-      "subgrupo": "50746577000115",
-      "conglomerado": "50746577000115",
+      "subgrupo": "900001000",
+      "conglomerado": "900001000",
       "moeda": {
         "codigo": "180300790",
         "descricao": "BRL"
@@ -44,15 +44,1929 @@
       "faturamento": [
         {
           "dataReferencia": "2024-12-31",
-          "valor": 15000000.00
+          "valor": 8000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900002000": [
+    {
+      "codigo": 1010,
+      "nome": "Análise 1010",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 4,
+        "descricao": "Matriz Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900002000",
+      "conglomerado": "900002000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 1200000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900002001": [
+    {
+      "codigo": 1011,
+      "nome": "Análise 1011",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 1,
+        "descricao": "Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900002001",
+      "conglomerado": "900002001",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 15000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": false
+    }
+  ],
+  "900002002": [
+    {
+      "codigo": 1012,
+      "nome": "Análise 1012",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900002002",
+      "conglomerado": "900002002",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": false,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 600000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900003000": [
+    {
+      "codigo": 1020,
+      "nome": "Análise 1020",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900003000",
+      "conglomerado": "900003000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 25000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900003001": [
+    {
+      "codigo": 1021,
+      "nome": "Análise 1021",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900003001",
+      "conglomerado": "900003001",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 500
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900003002": [
+    {
+      "codigo": 1022,
+      "nome": "Análise 1022",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900003002",
+      "conglomerado": "900003002",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 50000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900003003": [
+    {
+      "codigo": 1023,
+      "nome": "Análise 1023",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900003003",
+      "conglomerado": "900003003",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 2000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900003004": [
+    {
+      "codigo": 1024,
+      "nome": "Análise 1024",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900003004",
+      "conglomerado": "900003004",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 200
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004000": [
+    {
+      "codigo": 1030,
+      "nome": "Análise 1030",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004000",
+      "conglomerado": "900004000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 12000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004001": [
+    {
+      "codigo": 1031,
+      "nome": "Análise 1031",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004001",
+      "conglomerado": "900004001",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 100
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004002": [
+    {
+      "codigo": 1032,
+      "nome": "Análise 1032",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004002",
+      "conglomerado": "900004002",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 900
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004003": [
+    {
+      "codigo": 1033,
+      "nome": "Análise 1033",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004003",
+      "conglomerado": "900004003",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 10000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004004": [
+    {
+      "codigo": 1034,
+      "nome": "Análise 1034",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004004",
+      "conglomerado": "900004004",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 60000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004005": [
+    {
+      "codigo": 1035,
+      "nome": "Análise 1035",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004005",
+      "conglomerado": "900004005",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 200000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004006": [
+    {
+      "codigo": 1036,
+      "nome": "Análise 1036",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004006",
+      "conglomerado": "900004006",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 400000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004007": [
+    {
+      "codigo": 1037,
+      "nome": "Análise 1037",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004007",
+      "conglomerado": "900004007",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 800000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004008": [
+    {
+      "codigo": 1038,
+      "nome": "Análise 1038",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004008",
+      "conglomerado": "900004008",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 1800000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004009": [
+    {
+      "codigo": 1039,
+      "nome": "Análise 1039",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004009",
+      "conglomerado": "900004009",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 3500000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900004010": [
+    {
+      "codigo": 1040,
+      "nome": "Análise 1040",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900004010",
+      "conglomerado": "900004010",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 7000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900007000": [
+    {
+      "codigo": 1050,
+      "nome": "Análise 1050",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900007000",
+      "conglomerado": "900007000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 5000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900007001": [
+    {
+      "codigo": 1051,
+      "nome": "Análise 1051",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 2,
+        "descricao": "Inativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900007001",
+      "conglomerado": "900007001",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 9999999
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900008000": [
+    {
+      "codigo": 1060,
+      "nome": "Análise 1060",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900008000",
+      "conglomerado": "900008000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2019-03-31",
+          "valor": 3000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900009000": [
+    {
+      "codigo": 1070,
+      "nome": "Análise 1070",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 6,
+        "descricao": "Matriz Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900009000",
+      "conglomerado": "900009000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 999999
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    },
+    {
+      "codigo": 1071,
+      "nome": "Análise 1071",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 3,
+        "descricao": "Consolidado-Segmento Específico"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900009000",
+      "conglomerado": "900009000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 500000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    },
+    {
+      "codigo": 1072,
+      "nome": "Análise 1072",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900009000",
+      "conglomerado": "900009000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 100000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900010000": [
+    {
+      "codigo": 1080,
+      "nome": "Análise 1080",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900010000",
+      "conglomerado": "900010000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 1000
+        }
+      ],
+      "atualizacao": "2024-01-10T09:00:00",
+      "indicadorFatorPonderado": true
+    },
+    {
+      "codigo": 1081,
+      "nome": "Análise 1081",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900010000",
+      "conglomerado": "900010000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 9000
+        }
+      ],
+      "atualizacao": "2024-06-20T09:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900011000": [
+    {
+      "codigo": 1090,
+      "nome": "Análise 1090",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900011000",
+      "conglomerado": "900011000",
+      "moeda": {
+        "codigo": "180300791",
+        "descricao": "USD"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 4000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900012000": [
+    {
+      "codigo": 1100,
+      "nome": "Análise 1100",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "3",
+        "descricao": "Unitário",
+        "valor": 1
+      },
+      "subgrupo": "900012000",
+      "conglomerado": "900012000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 15000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900013000": [
+    {
+      "codigo": 1110,
+      "nome": "Análise 1110",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900013000",
+      "conglomerado": "900013000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 50000000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900014000": [
+    {
+      "codigo": 1120,
+      "nome": "Análise 1120",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 1,
+        "descricao": "Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900014000",
+      "conglomerado": "900014000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 250
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": false
+    }
+  ],
+  "900017000": [
+    {
+      "codigo": 1130,
+      "nome": "Análise 1130",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 1,
+        "descricao": "Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900017000",
+      "conglomerado": "900017000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 7000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": false
+    }
+  ],
+  "900018002": [
+    {
+      "codigo": 1140,
+      "nome": "Análise 1140",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900018002",
+      "conglomerado": "900018002",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 3000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900019000": [
+    {
+      "codigo": 1150,
+      "nome": "Análise 1150",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900019000",
+      "conglomerado": "900019000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 6000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900019001": [
+    {
+      "codigo": 1151,
+      "nome": "Análise 1151",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900019001",
+      "conglomerado": "900019001",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 50
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "900020000": [
+    {
+      "codigo": 1160,
+      "nome": "Análise 1160",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 2,
+        "descricao": "Consolidado-Subgrupo Todo"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "900020000",
+      "conglomerado": "900020000",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 6000
+        }
+      ],
+      "atualizacao": "2024-06-15T10:00:00",
+      "indicadorFatorPonderado": true
+    }
+  ],
+  "50746577": [
+    {
+      "codigo": 2097,
+      "nome": "Análise 2097",
+      "etapa": null,
+      "situacao": {
+        "codigo": 3,
+        "descricao": "Aprovado"
+      },
+      "indicadorVigente": {
+        "codigo": 1,
+        "descricao": "Ativo"
+      },
+      "categoria": {
+        "codigo": 1,
+        "descricao": "Individual"
+      },
+      "unidade": {
+        "codigo": "1",
+        "descricao": "Mil",
+        "valor": 1000
+      },
+      "subgrupo": "050746577",
+      "conglomerado": "050746577",
+      "moeda": {
+        "codigo": "180300790",
+        "descricao": "BRL"
+      },
+      "grupoEmpresa": {
+        "codigo": 763,
+        "nome": "OUTROS",
+        "prospect": {
+          "codigo": 1,
+          "nome": "Cliente"
+        }
+      },
+      "auditoria": {
+        "codigo": 1,
+        "dataCriacao": "2023-04-20T22:33:43",
+        "possuiAuditoria": true,
+        "entradaManual": false
+      },
+      "faturamento": [
+        {
+          "dataReferencia": "2024-12-31",
+          "valor": 15000000
         }
       ],
       "atualizacao": "2024-06-15T14:30:00",
       "indicadorFatorPonderado": true
     }
-  ],
-  "page": 1,
-  "size": 100,
-  "totalElements": 1,
-  "totalPages": 1
+  ]
 }

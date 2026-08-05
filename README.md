@@ -40,6 +40,11 @@ infraestrutura inferida) em [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
 - **BUSCAR** (`GET /faturamento/{documento}`, `GET /conglomerados/{documento}/
   subgrupos`): *read-through* — combina o que já está salvo com o Endpoint
   de Faturamento, aplicando as regras de negócio R1/R2/R3.
+- **BUSCAR GRUPOS** (`GET /grupos-economicos?documento=`): busca "like" no
+  NJ6 (documento parcial) — devolve os grupos econômicos candidatos (cabeça +
+  subgrupos, sem faturamento nenhum). É o passo de autocomplete que alimenta a
+  tela antes do analista escolher o documento exato e cair no fluxo BUSCAR
+  acima.
 
 Diagramas de sequência de cada fluxo (+ autenticação OAuth2 + cascata R1/R2/R3)
 em [`docs/FLUXOS.md`](docs/FLUXOS.md).
@@ -76,7 +81,7 @@ black --config pyproject.toml --check src tests features
 
 ## Testes
 
-- **Unitários (pytest, 227 testes, 100% de cobertura de linha em `app/src/app`)**,
+- **Unitários (pytest, 288 testes, 99% de cobertura de linha em `app/src/app`)**,
   cobrindo domínio, adapters (HTTP/DynamoDB, com dublês de rede/banco em
   `tests/http_fakes.py`/`tests/dynamo_fakes.py`), API (rotas via
   `fastapi.testclient.TestClient`) e `core`:

@@ -48,6 +48,9 @@ class Settings:
     quickconfig_ttl_s: int = int(os.environ.get("QUICKCONFIG_TTL_S", "300"))
     quickconfig_key_faixas: str = os.environ.get("QUICKCONFIG_KEY_FAIXAS", "catalogo-faixas")
     quickconfig_key_moedas: str = os.environ.get("QUICKCONFIG_KEY_MOEDAS", "catalogo-moedas")
+    quickconfig_key_auditorias: str = os.environ.get(
+        "QUICKCONFIG_KEY_AUDITORIAS", "catalogo-auditorias"
+    )
     quickconfig_key_limite_divergencia: str = os.environ.get(
         "QUICKCONFIG_KEY_LIMITE_DIVERGENCIA", "limite-Maximo-Divergencia-Porcentagem"
     )

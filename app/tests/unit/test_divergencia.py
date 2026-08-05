@@ -51,6 +51,24 @@ def test_troca_de_unidade_gera_divergencia():
     assert any(d["tipo"] == "UNIDADE" for d in divs)
 
 
+def test_mesma_unidade_grafada_diferente_nao_gera_divergencia():
+    """ "milhoes" (sem acento) e "milhões" (com acento) são a MESMA unidade (mesmo
+    multiplicador em `faixa.py`) — não é uma troca de unidade de verdade."""
+    existente = _marcador(valor=Decimal("100"), unidade="milhoes")
+    novo = _marcador(valor=Decimal("100"), unidade="milhões")
+    divs = divergencia.avaliar(novo, existente, 30)
+    assert divs == []
+
+
+def test_troca_de_unidade_de_verdade_com_multiplicadores_diferentes():
+    """ "mil" (x1.000) pra "milhoes" (x1.000.000) É uma troca de unidade de verdade,
+    mesmo os dois sendo unidades reconhecidas."""
+    existente = _marcador(valor=Decimal("100"), unidade="mil")
+    novo = _marcador(valor=Decimal("100"), unidade="milhoes")
+    divs = divergencia.avaliar(novo, existente, 30)
+    assert any(d["tipo"] == "UNIDADE" and d["de"] == "mil" and d["para"] == "milhoes" for d in divs)
+
+
 def test_varias_divergencias_simultaneas():
     existente = _marcador(valor=Decimal("1000000"), moeda="BRL", unidade="milhoes")
     novo = _marcador(valor=Decimal("5000000"), moeda="USD", unidade="milhares")

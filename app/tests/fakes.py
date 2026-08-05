@@ -48,11 +48,17 @@ class FakeRepositorio:
 
 
 class FakeNJ6:
-    def __init__(self, conglomerado: Conglomerado) -> None:
+    def __init__(
+        self, conglomerado: Conglomerado, grupos: Optional[list[Conglomerado]] = None
+    ) -> None:
         self._conglomerado = conglomerado
+        self._grupos = grupos if grupos is not None else [conglomerado]
 
     def get_por_documento(self, documento: str) -> Conglomerado:
         return self._conglomerado
+
+    def buscar_grupos(self, termo: str) -> list[Conglomerado]:
+        return self._grupos
 
 
 class FakeEndpoint:
