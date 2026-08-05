@@ -1,0 +1,438 @@
+openapi: 3.1.0
+info:
+  title: Faturamento
+  description: Faturamento IRB - caminhos de salvar (POST) e buscar (GET).
+  version: 1.0.0
+paths:
+  /irb-cra-faturamento/v1/faturamento/{documento}:
+    post:
+      summary: Salvar
+      operationId: salvar_irb_cra_faturamento_v1_faturamento__documento__post
+      parameters:
+      - name: documento
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^\d+$
+          description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro
+            identificador)
+          title: Documento
+        description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro identificador)
+        example: '12345678000199'
+      - name: X-RACF
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: RACF de quem informou (responsabilização)
+          title: X-Racf
+        description: RACF de quem informou (responsabilização) — também vira a coluna
+          "Atualizado por" na tela (é o RACF mesmo, não um nome).
+        example: r123456
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaturamentoRequest'
+            example:
+              conglomeradoDoc: '12345678000199'
+              marcadores:
+              - subgrupoDoc: '12345678000199'
+                nome: Grupo Exemplo Participações
+                idSpread: SPREAD-2024-08
+                sistemaOrigem: CRA
+                confirmadoDivergencia: false
+                semFaturamento: false
+                justificativa: Faturamento informado seguindo visão consolidada do grupo.
+                atual:
+                  valor: '6500000'
+                  faixaCodigo: null
+                  dataRefBalanco: '2024-06-30'
+                  moeda: BRL
+                  unidade: mil
+                  idSpread: SPREAD-2024-08
+                  auditoria: KPMG
+                  valorAtivo: '900000'
+              - subgrupoDoc: '98765432000188'
+                nome: Exemplo Participações Subgrupo
+                idSpread: null
+                sistemaOrigem: null
+                confirmadoDivergencia: false
+                semFaturamento: true
+                justificativa: Empresa recém-constituída, sem balanço publicado ainda.
+                atual: null
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Salvar Irb Cra Faturamento V1 Faturamento  Documento  Post
+              example:
+                conglomeradoDoc: '12345678000199'
+                nomeGrupoEconomico: Grupo Exemplo Participações
+                segmento: Atacado
+                origemDados: BASE
+                atualizadoEm: '2024-08-05T14:32:10Z'
+                marcadores:
+                - nivel: CONGLOMERADO
+                  subgrupoDoc: '12345678000199'
+                  nome: Grupo Exemplo Participações
+                  atual:
+                    valor: '6500000'
+                    faixaCodigo: 5_bi_10_bi
+                    faixaDescricao: null
+                    dataRefBalanco: '2024-06-30'
+                    moeda: BRL
+                    unidade: mil
+                    idSpread: SPREAD-2024-08
+                    racf: r123456
+                    auditoria: KPMG
+                    valorAtivo: '900000'
+                  semFaturamento: false
+                  origem: BASE
+                  justificativa: Faturamento informado seguindo visão consolidada do grupo.
+                  atualizadoEm: '2024-08-05T14:32:10Z'
+                - nivel: SUBGRUPO
+                  subgrupoDoc: '98765432000188'
+                  nome: Exemplo Participações Subgrupo
+                  atual: null
+                  semFaturamento: true
+                  origem: BASE
+                  justificativa: Empresa recém-constituída, sem balanço publicado ainda.
+                  atualizadoEm: '2024-08-05T14:32:10Z'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+              example:
+                detail:
+                - loc:
+                  - body
+                  - marcadores
+                  - 0
+                  - atual
+                  - moeda
+                  msg: field required
+                  type: value_error.missing
+    get:
+      summary: Buscar
+      operationId: buscar_irb_cra_faturamento_v1_faturamento__documento__get
+      parameters:
+      - name: documento
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^\d+$
+          description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro
+            identificador)
+          title: Documento
+        description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro identificador)
+        example: '12345678000199'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Buscar Irb Cra Faturamento V1 Faturamento  Documento  Get
+              example:
+                conglomeradoDoc: '12345678000199'
+                nomeGrupoEconomico: Grupo Exemplo Participações
+                segmento: Atacado
+                origemDados: BASE
+                atualizadoEm: '2024-08-05T14:32:10Z'
+                marcadores:
+                - nivel: CONGLOMERADO
+                  subgrupoDoc: '12345678000199'
+                  nome: Grupo Exemplo Participações
+                  atual:
+                    valor: '6500000'
+                    faixaCodigo: 5_bi_10_bi
+                    faixaDescricao: 5 Bi a 10 Bi
+                    dataRefBalanco: '2024-06-30'
+                    moeda: BRL
+                    unidade: mil
+                    idSpread: SPREAD-2024-08
+                    racf: r123456
+                    auditoria: KPMG
+                    valorAtivo: '900000'
+                  semFaturamento: false
+                  origem: BASE
+                  justificativa: null
+                  atualizadoEm: '2024-08-05T14:32:10Z'
+                - nivel: SUBGRUPO
+                  subgrupoDoc: '98765432000188'
+                  nome: Exemplo Participações Subgrupo
+                  atual:
+                    valor: '4800000'
+                    faixaCodigo: 360_mil_4_8_mm
+                    faixaDescricao: 360 mil a 4,8 MM
+                    dataRefBalanco: '2024-06-30'
+                    moeda: BRL
+                    unidade: unitario
+                    idSpread: null
+                    racf: null
+                    auditoria: null
+                    valorAtivo: null
+                  semFaturamento: false
+                  origem: ENDPOINT
+                  justificativa: null
+                  atualizadoEm: '2024-08-05T14:32:10Z'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /irb-cra-faturamento/v1/grupos-economicos:
+    get:
+      summary: Buscar Grupos
+      description: Busca "like" no NJ6 (autocomplete) — `documento` pode ser um CNPJ/CPF
+        parcial. Devolve os grupos econômicos que batem, sem faturamento nenhum (isso é
+        só o passo de seleção antes de chamar `GET /faturamento/{documento}` com o
+        documento exato escolhido).
+      operationId: buscar_grupos_irb_cra_faturamento_v1_grupos_economicos_get
+      parameters:
+      - name: documento
+        in: query
+        required: true
+        schema:
+          type: string
+          pattern: ^\d+$
+          description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro
+            identificador)
+          title: Documento
+        description: Documento numérico do conglomerado (CPF, CNPJ, CGI ou outro identificador,
+          pode ser parcial)
+        example: '0592'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Buscar Grupos Irb Cra Faturamento V1 Grupos Economicos Get
+              example:
+                grupos:
+                - nomeGrupoEconomico: PESSOA 1 LTDA
+                  conglomeradoDoc: '059274355'
+                  segmento: null
+                  subgrupos:
+                  - nome: PESSOA 1 LTDA
+                    documento: '059274355'
+                  - nome: OUTROS
+                    documento: '050746577'
+                - nomeGrupoEconomico: VICTOR HENRIQUE MOURA ROCHA
+                  conglomeradoDoc: '053577744'
+                  segmento: null
+                  subgrupos:
+                  - nome: OUTROS
+                    documento: '053577744'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+              example:
+                detail:
+                - loc:
+                  - query
+                  - documento
+                  msg: field required
+                  type: value_error.missing
+components:
+  schemas:
+    FaturamentoRequest:
+      properties:
+        conglomeradoDoc:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Conglomeradodoc
+        marcadores:
+          items:
+            $ref: '#/components/schemas/MarcadorIn'
+          type: array
+          title: Marcadores
+          default: []
+      type: object
+      title: FaturamentoRequest
+      example:
+        conglomeradoDoc: '12345678000199'
+        marcadores:
+        - subgrupoDoc: '12345678000199'
+          nome: Grupo Exemplo Participações
+          idSpread: SPREAD-2024-08
+          sistemaOrigem: CRA
+          confirmadoDivergencia: false
+          semFaturamento: false
+          justificativa: null
+          atual:
+            valor: '6500000'
+            faixaCodigo: null
+            dataRefBalanco: '2024-06-30'
+            moeda: BRL
+            unidade: mil
+            idSpread: SPREAD-2024-08
+            auditoria: KPMG
+            valorAtivo: '900000'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    InfoIn:
+      properties:
+        valor:
+          anyOf:
+          - type: number
+          - type: string
+          - type: 'null'
+          title: Valor
+        faixaCodigo:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Faixacodigo
+        dataRefBalanco:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Datarefbalanco
+        moeda:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Moeda
+        unidade:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Unidade
+        idSpread:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idspread
+        auditoria:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Auditoria
+        valorAtivo:
+          anyOf:
+          - type: number
+          - type: string
+          - type: 'null'
+          title: Valorativo
+      type: object
+      title: InfoIn
+      example:
+        valor: '6500000'
+        faixaCodigo: null
+        dataRefBalanco: '2024-06-30'
+        moeda: BRL
+        unidade: mil
+        idSpread: SPREAD-2024-08
+        auditoria: KPMG
+        valorAtivo: '900000'
+    MarcadorIn:
+      properties:
+        subgrupoDoc:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Subgrupodoc
+        nome:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Nome
+        idSpread:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idspread
+        sistemaOrigem:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sistemaorigem
+        confirmadoDivergencia:
+          type: boolean
+          title: Confirmadodivergencia
+          default: false
+        semFaturamento:
+          type: boolean
+          title: Semfaturamento
+          default: false
+        justificativa:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Justificativa
+        atual:
+          anyOf:
+          - $ref: '#/components/schemas/InfoIn'
+          - type: 'null'
+        faturamentoCra:
+          anyOf:
+          - $ref: '#/components/schemas/InfoIn'
+          - type: 'null'
+      type: object
+      title: MarcadorIn
+      example:
+        subgrupoDoc: '12345678000199'
+        nome: Grupo Exemplo Participações
+        idSpread: SPREAD-2024-08
+        sistemaOrigem: CRA
+        confirmadoDivergencia: false
+        semFaturamento: false
+        justificativa: null
+        atual:
+          valor: '6500000'
+          faixaCodigo: null
+          dataRefBalanco: '2024-06-30'
+          moeda: BRL
+          unidade: mil
+          idSpread: SPREAD-2024-08
+          auditoria: KPMG
+          valorAtivo: '900000'
+        faturamentoCra: null
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

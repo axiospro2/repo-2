@@ -12,3 +12,4 @@ repos:
       - id: ruff
         files: ^(app|tests)/
         args: ["--config", "app/pyproject.toml", "--fix"]
+
