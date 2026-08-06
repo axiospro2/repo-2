@@ -273,7 +273,7 @@ def test_correlation_id_e_diferente_a_cada_pagina(monkeypatch):
 
     _endpoint(pool).buscar("123456789", asof=ASOF)
 
-    ids = [c["headers"]["x-itau-correlationid"] for c in pool.chamadas]
+    ids = [c["headers"]["x-itau-correlationId"] for c in pool.chamadas]
     assert len(set(ids)) == 2  # cada página com seu próprio correlation-id
 
 

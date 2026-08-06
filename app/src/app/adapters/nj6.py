@@ -13,7 +13,7 @@ import urllib3
 
 from app.adapters.auth import TokenProvider, build_token_provider
 from app.core.http_client import get_pool
-from app.core.logging import get_logger, log_event
+from app.core.logging import get_bff_correlation_id, get_logger, log_event
 from app.core.mascaramento import mascarar_documento
 from app.core.retry import ErroServidorIntegracao, http_retry
 from app.core.settings import settings
@@ -98,33 +98,55 @@ def _map_conglomerado(raw: dict) -> Conglomerado:
         raise
 
 
-def _map_grupos_lista(raw: dict) -> list[Conglomerado]:
-    """Mapeia a resposta da busca "like" do NJ6 (`buscar_grupos`) — `data[]` pode trazer
-    VÁRIOS grupos econômicos misturados com itens soltos de pessoa física sem grupo
-    (`{"pessoa": {...}}`, sem `cabeca_grupo`); esses últimos são ignorados aqui porque a
-    busca do front só lista conglomerado/subgrupo (documento raiz), não participante avulso.
+def _map_conglomerados_lista(raw: dict) -> list[Conglomerado]:
+    """Mapeia a resposta com MÚLTIPLOS conglomerados do NJ6 (`get_por_documento` e `buscar_grupos`).
 
-    Erro ao mapear 1 item não derruba os demais — só aquele item é descartado do resultado.
+    A resposta vem em `data[]` e pode trazer:
+    - Múltiplos grupos econômicos (com `cabeca_grupo`)
+    - Itens soltos de pessoa física sem grupo (`{"pessoa": {...}}`, sem `cabeca_grupo`)
+
+    Os itens soltos são ignorados; só os grupos são retornados.
+    Erro ao mapear 1 item não derruba os demais – só aquele item é descartado.
     """
     itens = raw.get("data") or []
+    log_event(
+        _logger,
+        "nj6.map_conglomerados_lista.inicio",
+        level="debug",
+        total_itens_raw=len(itens),
+    )
+
     grupos: list[Conglomerado] = []
     for i, item in enumerate(itens):
         if "cabeca_grupo" not in item:
+            log_event(
+                _logger,
+                "nj6.map_conglomerados_lista.item_ignorado",
+                level="debug",
+                idx=i,
+                motivo="sem_cabeca_grupo",
+            )
             continue
+
         try:
-            grupos.append(_map_conglomerado(item))
+            grupo_mapeado = _map_conglomerado(item)
+            grupos.append(grupo_mapeado)
         except Exception as e:
-            _logger.exception(
-                "nj6.map_grupos_lista.erro_item",
+            log_event(
+                _logger,
+                "nj6.map_conglomerados_lista.erro_item",
+                level="warning",
                 extra={
                     "ctx": {
-                        "event": "nj6.map_grupos_lista.erro_item",
+                        "event": "nj6.map_conglomerados_lista.erro_item",
                         "idx": i,
                         "tipo_erro": type(e).__name__,
                         "mensagem": str(e),
                     }
                 },
             )
+            continue
+
     return grupos
 
 
@@ -148,7 +170,7 @@ class HttpNJ6:
           - x-itau-correlationid: <UUID>
         """
         # Gerar correlation-id único (UUID)
-        correlation_id = str(uuid.uuid4())
+        correlation_id = get_bff_correlation_id() or str(uuid.uuid4())
 
         # Montar headers
         headers = self._token.auth_headers()  # Authorization: Bearer <JWT>
@@ -157,7 +179,7 @@ class HttpNJ6:
         headers["Content-Type"] = "application/json"
 
         # Montar URL com parametro
-        url = f"{self.base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={urllib.parse.quote(valor)}"
+        url = f"{self.base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento={urllib.parse.quote(valor)}"
 
         # Log técnico da requisição — sem a URL completa (contém o documento na querystring)
         log_event(
@@ -195,7 +217,7 @@ class HttpNJ6:
     @http_retry
     def get_por_documento(self, documento: str) -> Conglomerado:
         """
-        GET {base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={documento}
+        GET {base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento={documento}
 
         Busca exata por documento completo. Com retry automático em caso de
         timeout/erro transitório.
@@ -240,7 +262,13 @@ class HttpNJ6:
                 status_code=resp.status,
             )
 
-            return _map_conglomerado(data)
+            # Mapear múltiplos conglomerados e retornar o primeiro não-vazio
+            conglomerados = _map_conglomerados_lista(data)
+            if not conglomerados:
+                raise NaoEncontrado(f"Nenhum conglomerado com documento {documento} foi mapeado.")
+
+            # Retornar o primeiro conglomerado (normalmente há apenas 1)
+            return conglomerados[0]
 
         except json.JSONDecodeError as e:
             log_event(
@@ -268,7 +296,7 @@ class HttpNJ6:
     @http_retry
     def buscar_grupos(self, termo: str) -> list[Conglomerado]:
         """
-        GET {base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={termo}
+        GET {base_url}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento={termo}
 
         Mesmo endpoint do `get_por_documento`, só que pra busca parcial ("like") usada no
         autocomplete do front: `termo` pode ser um CNPJ/CPF incompleto, e o NJ6 devolve
@@ -317,7 +345,7 @@ class HttpNJ6:
                 status_code=resp.status,
             )
 
-            return _map_grupos_lista(data)
+            return _map_conglomerados_lista(data)
 
         except json.JSONDecodeError as e:
             log_event(

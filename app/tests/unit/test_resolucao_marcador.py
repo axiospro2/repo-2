@@ -104,6 +104,22 @@ def test_marcador_do_endpoint_converte_unidade_mil_antes_da_faixa():
     assert m.atual.faixa_codigo == "FAIXA_2"  # 15000 * 1000 = 15.000.000
 
 
+def test_marcador_do_endpoint_com_unidade_real_efetivo_nao_multiplica():
+    """ "Real/Efetivo" (enum Java UnidadeEnum.REAL) é o ×1 do Endpoint - vocabulário
+    diferente de "unitário" (só existe no combo manual do SALVAR), mas precisa ser
+    reconhecido igual, senão cai em "unidade desconhecida" e perde a faixa."""
+    faixas = [
+        {"codigo": "FAIXA_1", "descricao": "ate 4,8MM", "min": 0, "max": 4800000},
+        {"codigo": "FAIXA_2", "descricao": "4,8MM a 20MM", "min": 4800000, "max": 20000000},
+    ]
+    res = ResultadoFaturamento(
+        valor_faturamento=Decimal("15000000"), data_ref_balanco=_hoje(), unidade="Real/Efetivo"
+    )
+    m = resolucao.marcador_do_endpoint(CDOC, SDOC, Nivel.CONGLOMERADO, "Grupo", res, faixas)
+    assert m.atual.valor == Decimal("15000000")  # persiste o valor bruto do endpoint
+    assert m.atual.faixa_codigo == "FAIXA_2"  # 15.000.000 * 1 = 15.000.000, sem multiplicar
+
+
 def test_marcador_do_endpoint_com_unidade_desconhecida_nao_quebra_a_leitura():
     res = ResultadoFaturamento(
         valor_faturamento=Decimal("5000000"), data_ref_balanco=_hoje(), unidade="trilhoes"

@@ -23,7 +23,7 @@ Pré-requisito: stack local no ar (`docker compose up -d --build` + uvicorn — 
 | 09 | `900009000` | Iota Mineração S.A. | 0 | 3 análises concorrendo pela R1 com categorias diferentes (6, 3, 2) |
 | 10 | `900010000` | Capa Logística Integrada S.A. | 0 | 2 análises R1 na MESMA categoria |
 | 11 | `900011000` | Lambda Farmacêutica S.A. | 0 | Moeda USD (não BRL) vinda do Endpoint |
-| 12 | `900012000` | Mu Alimentos e Bebidas S.A. | 0 | Unidade "Unitário" (não "Mil") vinda do Endpoint |
+| 12 | `900012000` | Mu Alimentos e Bebidas S.A. | 0 | Unidade "Real/Efetivo" (não "Mil") vinda do Endpoint |
 | 13 | `900013000` | Nu Energia Renovável S.A. | 0 | Valor extremo vindo do Endpoint |
 | 14 | `900014000` | Csi Papelaria e Escritório Ltda | 0 | Valor pequeno resolvido via R2 (não R1) |
 | 15 | `900015000` | Ômicron Tecnologia da Informação S.A. | 0 | Só matriz, ZERO no Endpoint |
@@ -119,8 +119,8 @@ Pré-requisito: stack local no ar (`docker compose up -d --build` + uvicorn — 
 - **Documento (matriz):** `900012000`
 - **Subgrupos:** nenhum (só matriz)
 - **Com dado no Endpoint:** `900012000`
-- **Objetivo:** Unidade "Unitário" (não "Mil") vinda do Endpoint — o valor já vem em reais absolutos, sem multiplicador.
-- **Roteiro sugerido:** Buscar — confira que "unidade" vem "Unitário" e o valor bate direto com a faixa (15.000.000 -> 4_8_mm_20_mm) sem multiplicar por 1000.
+- **Objetivo:** Unidade "Real/Efetivo" (não "Mil") vinda do Endpoint — o valor já vem em reais absolutos, sem multiplicador.
+- **Roteiro sugerido:** Buscar — confira que "unidade" vem "Real/Efetivo" e o valor bate direto com a faixa (15.000.000 -> 4_8_mm_20_mm) sem multiplicar por 1000.
 
 ### Caso 13 — Nu Energia Renovável S.A.
 - **Documento (matriz):** `900013000`

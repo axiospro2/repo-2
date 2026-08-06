@@ -52,6 +52,13 @@ def test_multiplicador_unitario_e_identidade():
     assert multiplicador_unidade("unitário") == Decimal(1)
 
 
+def test_multiplicador_real_efetivo_e_identidade():
+    """ "Real/Efetivo" é o ×1 do Endpoint (enum Java UnidadeEnum.REAL) - vocabulário
+    diferente de "unitário" (que só existe no combo manual do SALVAR), mas mesma escala."""
+    assert multiplicador_unidade("Real/Efetivo") == Decimal(1)
+    assert multiplicador_unidade("real/efetivo") == Decimal(1)  # case-insensitive
+
+
 def test_multiplicador_escala_linear_das_4_unidades_da_tela():
     """Combo real da tela: unitário / mil / milhões / bilhões - escala linear (base 10)."""
     assert multiplicador_unidade("mil") == Decimal(1_000)

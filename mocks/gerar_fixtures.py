@@ -139,7 +139,8 @@ _add(Caso(
     segmento="Varejo",
     objetivo="Caso mais simples: só matriz, 1 análise R1 válida. GET puro, sem precisar salvar nada antes.",
     roteiro="Buscar o CNPJ — o faturamento já aparece resolvido pelo Endpoint (origem ENDPOINT), faixa \"5 Bi a 10 Bi\".",
-    matriz_analises=[r1(codigo=1001, categoria=2, valor=8_000_000)],  # 8.000.000 Mil = 8 Bi
+    matriz_analises=[r1(codigo=1001, categoria=2, valor=496_169_000,
+                         unidade_codigo="0", unidade_nome="Real/Efetivo", unidade_valor=1)],  # R$ 496,17 MM
 ))
 
 # ────────────────────────── 02 ──────────────────────────
@@ -268,9 +269,12 @@ _add(Caso(
 _add(Caso(
     n=12,
     nome_grupo="Mu Alimentos e Bebidas S.A.",
-    objetivo="Unidade \"Unitário\" (não \"Mil\") vinda do Endpoint — o valor já vem em reais absolutos, sem multiplicador.",
-    roteiro="Buscar — confira que \"unidade\" vem \"Unitário\" e o valor bate direto com a faixa (15.000.000 -> 4_8_mm_20_mm) sem multiplicar por 1000.",
-    matriz_analises=[r1(codigo=1100, categoria=2, valor=15_000_000, unidade_codigo="3", unidade_nome="Unitário", unidade_valor=1)],
+    objetivo="Unidade \"Real/Efetivo\" (não \"Mil\") vinda do Endpoint — o valor já vem em reais absolutos, sem multiplicador.",
+    roteiro="Buscar — confira que \"unidade\" vem \"Real/Efetivo\" e o valor bate direto com a faixa (15.000.000 -> 4_8_mm_20_mm) sem multiplicar por 1000.",
+    # codigo/descricao batem com o enum Java real (UnidadeEnum): REAL=0/"Real/Efetivo"/×1,
+    # MIL=1/"Mil"/×1.000, MILHOES=2/"Milhões"/×1e6, BILHOES=3/"Bilhões"/×1e9 — o fixture
+    # tinha "Unitário"/codigo 3 antes, que não existe no enum real (3 é BILHOES).
+    matriz_analises=[r1(codigo=1100, categoria=2, valor=15_000_000, unidade_codigo="0", unidade_nome="Real/Efetivo", unidade_valor=1)],
 ))
 
 # ────────────────────────── 13 ──────────────────────────
@@ -502,6 +506,17 @@ def _gerar_doc() -> None:
         "`GET /irb-cra-faturamento/v1/faturamento/{documento}`; qualquer CNPJ fora desta "
         "lista agora dá **404** no NJ6 (antes desse ajuste o mock ignorava qual CNPJ era "
         "buscado e sempre devolvia o mesmo registro).\n"
+    )
+    linhas.append(
+        "**Busca por subgrupo e busca \"like\" (`mocks/app/main.py`, não as fixtures)**: o "
+        "mock do NJ6 resolve o mesmo endpoint de 3 formas — documento EXATO da cabeça (1 "
+        "resultado), documento EXATO de um SUBGRUPO (ex. `900002001`, resolve pro "
+        "conglomerado inteiro do caso 02, igual buscar pela cabeça `900002000`) e documento "
+        "PARCIAL (ex. `9000` bate com os 20 casos, todos com documento começando em "
+        "`900...`) — usado por `GET /irb-cra-faturamento/v1/grupos-economicos?documento=` "
+        "(autocomplete). Essa lógica vive no *server* do mock (`mocks/app/main.py`), não "
+        "nas fixtures geradas — não precisa rodar `gerar_fixtures.py` de novo por causa "
+        "disso.\n"
     )
     linhas.append("## Índice rápido\n")
     linhas.append("| # | Documento | Grupo | Subgrupos | Objetivo |")

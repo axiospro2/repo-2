@@ -17,9 +17,9 @@
         "descricao": "Consolidado-Subgrupo Todo"
       },
       "unidade": {
-        "codigo": "1",
-        "descricao": "Mil",
-        "valor": 1000
+        "codigo": "0",
+        "descricao": "Real/Efetivo",
+        "valor": 1
       },
       "subgrupo": "900001000",
       "conglomerado": "900001000",
@@ -44,7 +44,7 @@
       "faturamento": [
         {
           "dataReferencia": "2024-12-31",
-          "valor": 8000000
+          "valor": 496169000
         }
       ],
       "atualizacao": "2024-06-15T10:00:00",
@@ -1519,8 +1519,8 @@
         "descricao": "Consolidado-Subgrupo Todo"
       },
       "unidade": {
-        "codigo": "3",
-        "descricao": "Unitário",
+        "codigo": "0",
+        "descricao": "Real/Efetivo",
         "valor": 1
       },
       "subgrupo": "900012000",

@@ -6,7 +6,7 @@ rodar a BFF localmente sem acesso aos serviços reais do Itaú.
 
 Paths espelhados (confirmar contra os adapters se algo mudar lá):
   - POST /oauth/token                                                      (auth.py / oauth2.py)
-  - GET  /consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa=  (nj6.py)
+  - GET  /consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=&indicador_estrangeiro=&documento=  (nj6.py)
   - GET  /gestaobalanco/v1/spreads-faturamento?documento=&valido=&page=&size=  (endpoint.py)
 
 Não mocka parâmetros (faixas/moedas/limite de divergência) — isso vem do QuickConfig
@@ -74,7 +74,7 @@ def _achar_por_subgrupo(registros: dict, documento: str) -> dict | None:
 
 
 @app.get("/consulta-gruposeconomicos/v1/grupos-economicos")
-def nj6(codigo_identificacao_pessoa: str = ""):
+def nj6(documento: str = "", codigo_tipo_pessoa: str = "", indicador_estrangeiro: int = 0):
     """`nj6.json` é um dict {documento: registro}. Mesmo endpoint serve os dois usos do
     adapter (`get_por_documento` e `buscar_grupos`, ver `adapters/nj6.py`):
       - documento EXATO da cabeça -> 1 resultado só (`data` com 1 item), igual o real.
@@ -82,20 +82,20 @@ def nj6(codigo_identificacao_pessoa: str = ""):
         (`_achar_por_subgrupo`) — sem isso, buscar por um subgrupo isolado sempre dava 404.
       - documento PARCIAL ("like") -> todos os registros cujo documento (cabeça) começa com
         o termo, simulando a busca "like" do NJ6 real (usada pelo autocomplete do front).
+    `codigo_tipo_pessoa`/`indicador_estrangeiro` são aceitos mas não filtram nada aqui —
+    o mock não distingue PF/PJ nem estrangeiro, só o `documento`.
     404 quando não bate nada — ver docs/CASOS_TESTE_MOCK.md pra lista dos documentos
     disponíveis."""
     registros = _load("nj6.json")
 
-    exato = registros.get(codigo_identificacao_pessoa) or _achar_por_subgrupo(
-        registros, codigo_identificacao_pessoa
-    )
+    exato = registros.get(documento) or _achar_por_subgrupo(registros, documento)
     if exato is not None:
         return {"data": [exato]}
 
     like = [
         registro
         for doc, registro in registros.items()
-        if codigo_identificacao_pessoa and doc.startswith(codigo_identificacao_pessoa)
+        if documento and doc.startswith(documento)
     ]
     if not like:
         raise HTTPException(status_code=404, detail="Conglomerado não encontrado (mock).")

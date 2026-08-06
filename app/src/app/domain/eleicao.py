@@ -58,8 +58,8 @@ class ResultadoFaturamento:
     data_ref_balanco: str
     id_spread: Optional[str] = None
     sistema_origem: Optional[str] = None
-    moeda: str = "BRL"
-    unidade: str = "milhoes"
+    moeda: str = None
+    unidade: str = None
 
 
 @dataclass(frozen=True)

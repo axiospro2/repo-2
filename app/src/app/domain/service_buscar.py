@@ -70,8 +70,21 @@ def obter_faturamento(
     endpoint: Endpoint,
     catalogo: Catalogo,
 ) -> Faturamento:
-    """Read-through por documento: matriz + subgrupos, banco sempre vence quando presente."""
-    cong = nj6.get_por_documento(documento)
+    """Read-through por documento: matriz + subgrupos, banco sempre vence quando presente.
+
+    Se múltiplos conglomerados forem encontrados (busca like), retorna o primeiro com dados.
+    Se apenas um conglomerado é encontrado (busca exata), retorna esse.
+    """
+
+    # Buscar todos os grupos que contêm o documento (pode retornar múltiplos)
+    grupos = nj6.buscar_grupos(documento)
+
+    if not grupos:
+        raise ValueError(f"Nenhum conglomerado encontrado para o documento {documento}.")
+
+    # Usar o primeiro conglomerado encontrado
+    # (em buscas exatas, normalmente há apenas 1; em buscas like, retorna o primeiro)
+    cong = grupos[0]
     cdoc = cong.cabeca_documento_raiz
     salvos_por_sub = {m.subgrupo_doc: m for m in repo.get_conglomerado(cdoc)}
     faixas = (catalogo.obter() or {}).get("faixas") or []

@@ -197,6 +197,42 @@ class TestForwardSubgrupos:
         assert response.status_code == 500
 
 
+class TestForwardGruposEconomicos:
+    """GET /grupos-economicos?documento= (autocomplete "like")."""
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_retorna_200_ok(self, mock_forward, client):
+        mock_forward.return_value = (200, '{"grupos": []}', "application/json")
+        response = client.get("/api/grupos-economicos?documento=9000")
+        assert response.status_code == 200
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_repassa_query_documento(self, mock_forward, client):
+        mock_forward.return_value = (200, '{"grupos": []}', "application/json")
+        client.get("/api/grupos-economicos?documento=9000")
+        _, kwargs = mock_forward.call_args
+        assert kwargs["query"] == "documento=9000"
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_preserva_body_da_api_interna(self, mock_forward, client):
+        expected = '{"grupos": [{"nomeGrupoEconomico": "X", "conglomeradoDoc": "900001000", "subgrupos": []}]}'
+        mock_forward.return_value = (200, expected, "application/json")
+        response = client.get("/api/grupos-economicos?documento=9000")
+        assert response.json()["grupos"][0]["conglomeradoDoc"] == "900001000"
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_preserva_status_code_da_api_interna(self, mock_forward, client):
+        mock_forward.return_value = (422, '{"erro": "documento invalido"}', "application/json")
+        response = client.get("/api/grupos-economicos?documento=abc")
+        assert response.status_code == 422
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_trata_excecao(self, mock_forward, client):
+        mock_forward.side_effect = ConnectionError("API unavailable")
+        response = client.get("/api/grupos-economicos?documento=9000")
+        assert response.status_code == 500
+
+
 class TestCatalogo:
     """GET /catalogo - não faz forward, consome ParametrosCatalogo direto."""
 
@@ -224,6 +260,7 @@ class TestRouter:
     @pytest.mark.parametrize("path", [
         "/faturamento/{documento}",
         "/conglomerados/{documento}/subgrupos",
+        "/grupos-economicos",
         "/catalogo",
     ])
     def test_rota_registrada(self, path):

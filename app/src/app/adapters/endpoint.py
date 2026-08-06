@@ -19,7 +19,7 @@ import urllib3
 
 from app.adapters.auth import TokenProvider, build_token_provider
 from app.core.http_client import get_pool
-from app.core.logging import get_logger, log_event
+from app.core.logging import get_bff_correlation_id, get_logger, log_event
 from app.core.mascaramento import mascarar_documento
 from app.core.retry import ErroServidorIntegracao, http_retry
 from app.core.settings import settings
@@ -115,12 +115,12 @@ class HttpEndpoint:
         (`_buscar_todas_paginas`). Com retry automático em caso de timeout/erro transitório.
         """
         # Gerar correlation-id único (UUID)
-        correlation_id = str(uuid.uuid4())
+        correlation_id = get_bff_correlation_id() or str(uuid.uuid4())
 
         # Montar headers
         headers = self._token.auth_headers()  # Authorization: Bearer <JWT>
         headers["x-itau-apikey"] = settings.itau_api_key
-        headers["x-itau-correlationid"] = correlation_id
+        headers["x-itau-correlationId"] = correlation_id
         headers["Content-Type"] = "application/json"
 
         # Montar URL — `documento` filtra pelo CNPJ; `valido=true` é seguro (as 3 regras

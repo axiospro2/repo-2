@@ -19,3 +19,8 @@ services:
     build: ./mocks
     ports:
       - "8080:8080"
+    volumes:
+      # Fixtures montadas do host — editar nj6.json/endpoint.json reflete na hora
+      # (sem `--build`); o COPY no Dockerfile continua garantindo imagem
+      # autossuficiente pra quem só quer subir sem clonar o resto do repo.
+      - ./mocks/app/fixtures:/srv/app/fixtures

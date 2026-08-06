@@ -3,7 +3,7 @@ import json
 import pytest
 import urllib3
 
-from app.adapters.nj6 import HttpNJ6, _map_conglomerado, _map_grupos_lista
+from app.adapters.nj6 import HttpNJ6, _map_conglomerado, _map_conglomerados_lista
 from app.core.retry import ErroServidorIntegracao
 from app.domain.errors import NaoEncontrado
 from tests.http_fakes import FakePool, FakeResponse, FakeTokenProvider
@@ -86,7 +86,9 @@ def test_get_por_documento_sucesso(monkeypatch):
 
     cong = _nj6().get_por_documento("050746577")
     assert cong.nome_grupo_economico == "COSAN S A"
-    assert "codigo_identificacao_pessoa=050746577" in pool.chamadas[0]["url"]
+    assert "documento=050746577" in pool.chamadas[0]["url"]
+    assert "codigo_tipo_pessoa=J" in pool.chamadas[0]["url"]
+    assert "indicador_estrangeiro=0" in pool.chamadas[0]["url"]
 
 
 def test_get_por_documento_404_levanta_nao_encontrado(monkeypatch):
@@ -135,16 +137,21 @@ def test_get_por_documento_json_invalido_propaga(monkeypatch):
         _nj6().get_por_documento("050746577")
 
 
-def test_get_por_documento_erro_de_mapeamento_propaga(monkeypatch):
-    raw_quebrado = {"cabeca_grupo": {"documento_raiz": "123"}}  # falta nome_grupo_economico
+def test_get_por_documento_item_malformado_vira_nao_encontrado(monkeypatch):
+    """`get_por_documento` reusa `_map_conglomerados_lista` (mesmo parser de `buscar_grupos`),
+    que engole erro de mapeamento por item (loga e segue) — se o único item da lista falhar
+    ao mapear, sobra lista vazia, que vira NaoEncontrado (não KeyError)."""
+    raw_quebrado = {
+        "data": [{"cabeca_grupo": {"documento_raiz": "123"}}]  # falta nome_grupo_economico
+    }
     pool = FakePool([FakeResponse(200, json.dumps(raw_quebrado).encode("utf-8"))])
     _patch_pool(monkeypatch, pool)
 
-    with pytest.raises(KeyError):
+    with pytest.raises(NaoEncontrado):
         _nj6().get_por_documento("123")
 
 
-# ─────────── _map_grupos_lista (busca "like") ───────────
+# ─────────── _map_conglomerados_lista (busca exata e "like") ───────────
 
 RAW_LISTA_LIKE = {
     "data": [
@@ -179,8 +186,8 @@ RAW_LISTA_LIKE = {
 }
 
 
-def test_map_grupos_lista_mapeia_varios_grupos_ignorando_pessoa_solta():
-    grupos = _map_grupos_lista(RAW_LISTA_LIKE)
+def test_map_conglomerados_lista_mapeia_varios_grupos_ignorando_pessoa_solta():
+    grupos = _map_conglomerados_lista(RAW_LISTA_LIKE)
     assert len(grupos) == 2
     assert grupos[0].nome_grupo_economico == "PESSOA 1 LTDA"
     assert grupos[0].cabeca_documento_raiz == "059274355"
@@ -188,20 +195,24 @@ def test_map_grupos_lista_mapeia_varios_grupos_ignorando_pessoa_solta():
     assert grupos[1].nome_grupo_economico == "VICTOR HENRIQUE MOURA ROCHA"
 
 
-def test_map_grupos_lista_sem_data_retorna_vazio():
-    assert _map_grupos_lista({}) == []
+def test_map_conglomerados_lista_sem_data_retorna_vazio():
+    assert _map_conglomerados_lista({}) == []
 
 
-def test_map_grupos_lista_item_malformado_nao_derruba_os_demais():
+def test_map_conglomerados_lista_item_malformado_no_meio_nao_derruba_os_demais():
+    """Item quebrado NO MEIO da lista (não só no fim) — prova que o erro só descarta
+    aquele item e CONTINUA pros próximos, em vez de abortar a lista inteira."""
     raw = {
         "data": [
-            {"nome_grupo_economico": "OK", "cabeca_grupo": {"documento_raiz": "1"}},
+            {"nome_grupo_economico": "OK 1", "cabeca_grupo": {"documento_raiz": "1"}},
             {"cabeca_grupo": {"documento_raiz": "2"}},  # falta nome_grupo_economico -> KeyError
+            {"nome_grupo_economico": "OK 2", "cabeca_grupo": {"documento_raiz": "3"}},
         ]
     }
-    grupos = _map_grupos_lista(raw)
-    assert len(grupos) == 1
-    assert grupos[0].nome_grupo_economico == "OK"
+    grupos = _map_conglomerados_lista(raw)
+    assert len(grupos) == 2
+    assert grupos[0].nome_grupo_economico == "OK 1"
+    assert grupos[1].nome_grupo_economico == "OK 2"
 
 
 # ─────────── HttpNJ6.buscar_grupos ───────────
@@ -213,7 +224,7 @@ def test_buscar_grupos_sucesso_varios_resultados(monkeypatch):
 
     grupos = _nj6().buscar_grupos("05")
     assert len(grupos) == 2
-    assert "codigo_identificacao_pessoa=05" in pool.chamadas[0]["url"]
+    assert "documento=05" in pool.chamadas[0]["url"]
 
 
 def test_buscar_grupos_404_retorna_lista_vazia(monkeypatch):

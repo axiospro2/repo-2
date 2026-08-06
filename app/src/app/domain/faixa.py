@@ -5,12 +5,18 @@ Na LEITURA usamos a descrição (rótulo que a tela mostra) e, quando há valor 
 não faixa gravada, o de-para para exibir a faixa correspondente. No SALVAR, só o de-para.
 
 ``valor_em_reais``/``multiplicador_unidade``: os limiares de faixa (``min``/``max``) estão em
-reais absolutos (ex.: "R$ 360 mil" = 360000). A tela do CRA oferece 4 unidades no combo
-("unitário", "mil", "milhões", "bilhões") numa escala linear normal (base 10, sem exceção pro
-default) — confirmado com o dono do negócio olhando a tela real: um valor de "6.500.000,00"
-com unidade "mil" aparece na listagem como "R$ 6,5 BI" (6.500.000 × 1.000 = 6.500.000.000),
-não como "milhões" sendo tratado à parte. `"unitário"` é quem tem multiplicador ×1 (o valor já
-é o número de reais); as outras escalam a partir dele.
+reais absolutos (ex.: "R$ 360 mil" = 360000). Duas origens diferentes de `unidade`, mesma
+escala linear (base 10):
+  - **SALVAR manual**: a tela do CRA oferece 4 unidades no combo ("unitário", "mil",
+    "milhões", "bilhões") — confirmado com o dono do negócio olhando a tela real: um valor
+    de "6.500.000,00" com unidade "mil" aparece na listagem como "R$ 6,5 BI"
+    (6.500.000 × 1.000 = 6.500.000.000), não como "milhões" sendo tratado à parte.
+  - **Endpoint (automático)**: o contrato real usa outro vocabulário — enum Java
+    `UnidadeEnum` (`REAL(0, "Real/Efetivo", ×1)`, `MIL(1, "Mil", ×1.000)`,
+    `MILHOES(2, "Milhões", ×1.000.000)`, `BILHOES(3, "Bilhões", ×1.000.000.000)`), confirmado
+    lendo o código-fonte real do serviço. `"Real/Efetivo"` é o ×1 do Endpoint — string
+    diferente de `"unitário"` (que só existe no combo do SALVAR), por isso os dois precisam
+    estar mapeados aqui.
 """
 
 from __future__ import annotations
@@ -19,6 +25,7 @@ from decimal import Decimal
 from typing import Optional
 
 _MULTIPLICADORES_UNIDADE: dict[str, Decimal] = {
+    # SALVAR manual (combo da tela "editar faturamento")
     "unitario": Decimal(1),
     "unitário": Decimal(1),
     "mil": Decimal(1_000),
@@ -30,6 +37,8 @@ _MULTIPLICADORES_UNIDADE: dict[str, Decimal] = {
     "bilhão": Decimal(1_000_000_000),
     "bilhoes": Decimal(1_000_000_000),
     "bilhões": Decimal(1_000_000_000),
+    # Endpoint automático (enum Java UnidadeEnum — string própria, não "unitário")
+    "real/efetivo": Decimal(1),
 }
 
 

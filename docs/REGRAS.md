@@ -1317,15 +1317,16 @@ flowchart TD
 
 ### 7.2 Regras da chamada HTTP
 
-> ### `R-NJ6-010` — Rota fixa: `GET {base}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa={documento}`
-> **Onde**: `get_por_documento`, montagem da `url`.
-> **Por quê**: **(documentado na docstring)** é o contrato do serviço NJ6 do
-> Itaú. O parâmetro se chama `codigo_identificacao_pessoa` (não `documento`)
-> porque o NJ6 aceita qualquer identificador de pessoa — é o que permite que o
-> documento de **um integrante qualquer** resolva o grupo inteiro.
+> ### `R-NJ6-010` — Rota fixa: `GET {base}/consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento={documento}`
+> **Onde**: `_requisitar_grupos_economicos` (compartilhado por `get_por_documento` e
+> `buscar_grupos`), montagem da `url`.
+> **Por quê**: **(confirmado contra o contrato real do NJ6)** 3 query params —
+> `codigo_tipo_pessoa` (fixo `"J"`), `indicador_estrangeiro` (fixo `0`) e
+> `documento` (o CNPJ/CPF/CGI buscado). Substituiu um formato anterior de 1 param
+> só (`codigo_identificacao_pessoa`) que não batia com o contrato real.
 
 > ### `R-NJ6-011` — O documento é **URL-encoded** (`urllib.parse.quote`)
-> **Onde**: `...?codigo_identificacao_pessoa={urllib.parse.quote(documento)}`
+> **Onde**: `...&documento={urllib.parse.quote(valor)}`
 > **Por quê**: **(inferido)** o valor entra numa querystring montada por
 > f-string. Como o `documento` já passou pelo `DOCUMENTO_PATTERN` (só dígitos,
 > `R-API-001`), o encode é redundante na prática — mas é a defesa correta contra
@@ -1350,13 +1351,16 @@ flowchart TD
 > passar a devolver um dict cacheado/compartilhado, essa mutação o contaminaria —
 > é um acoplamento implícito que vale conhecer.
 
-> ### `R-NJ6-020` — Cada chamada gera um `correlation_id` **UUID4 novo**
-> **Onde**: `correlation_id = str(uuid.uuid4())`
-> **Por quê**: **(inferido)** correlaciona *esta* chamada específica entre o
-> nosso log e o log do provedor NJ6 — é o identificador que se leva para uma
-> conversa com o time do outro lado. Sobrepõe o `ITAU_CORRELATION_ID` estático de
-> `settings` (`R-CFG-025`), que não serviria: um valor fixo por ambiente não
-> distingue chamadas.
+> ### `R-NJ6-020` — `correlation_id` reusa o do BFF se existir, senão gera **UUID4 novo**
+> **Onde**: `correlation_id = get_bff_correlation_id() or str(uuid.uuid4())`
+> **Por quê**: **(inferido, mesmo padrão de `adapters/endpoint.py`)** se a
+> requisição de entrada já trouxe um `x-itau-correlationid`/similar (propagado
+> via `set_bff_correlation_id`, contextvar), reusa esse id pra correlacionar a
+> chamada ao NJ6 com a requisição original do BFF ponta a ponta; sem isso,
+> gera um UUID4 novo (fallback, mesmo papel do id anterior — correlaciona
+> *esta* chamada específica entre nosso log e o do NJ6). Sobrepõe o
+> `ITAU_CORRELATION_ID` estático de `settings` (`R-CFG-025`), que não serviria:
+> um valor fixo por ambiente não distingue chamadas.
 
 > ### `R-NJ6-021` — O `correlation_id` é regenerado **a cada tentativa** do retry
 > **Onde**: `uuid.uuid4()` está **dentro** do método decorado com `@http_retry`.
@@ -1530,7 +1534,7 @@ flowchart TD
 > pra ser chamado pelos dois métodos; só o tratamento do status/corpo da resposta diverge
 > depois (404 vira `NaoEncontrado` num, `[]` no outro).
 > **Por quê**: **(documentado, confirmado com o time)** é o **mesmo** endpoint NJ6
-> (`consulta-gruposeconomicos/v1/grupos-economicos?codigo_identificacao_pessoa=`), só que
+> (`consulta-gruposeconomicos/v1/grupos-economicos?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento=`), só que
 > `termo` pode ser um documento **parcial** — o NJ6 casa "como um LIKE" e devolve **todos**
 > os grupos que batem em `data[]`, em vez de 1 só.
 
@@ -2740,6 +2744,31 @@ flowchart LR
     D -->|"SALVAR"| F["ErroValidacao 422<br/>(fail closed)"]
     D -->|"BUSCAR"| G["log warning<br/>faixa_codigo = None (não derruba a leitura)"]
 ```
+
+> ### `R-FXA-010` — `_MULTIPLICADORES_UNIDADE` tem **duas** origens de vocabulário — SALVAR (`"unitário"`) e Endpoint (`"Real/Efetivo"`)
+> **Onde**: `domain/faixa.py` — chave `"real/efetivo"` na tabela, adicionada a
+> `_MULTIPLICADORES_UNIDADE` além de `"unitario"`/`"unitário"`.
+> **Por quê**: **(confirmado lendo o código-fonte real do Endpoint)** o `R-FXA-009`
+> documentou o combo do SALVAR (`"unitário"`/`"mil"`/`"milhões"`/`"bilhões"`), mas o
+> Endpoint de Faturamento usa um vocabulário **próprio**, vindo do enum Java
+> `UnidadeEnum implements PropertyIntegerEnum`:
+> ```java
+> REAL(0, "Real/Efetivo", "Re", BigDecimal.ONE),
+> MIL(1, "Mil", "M ", BigDecimal.valueOf(1_000)),
+> MILHOES(2, "Milhões", "MM", BigDecimal.valueOf(1_000_000)),
+> BILHOES(3, "Bilhões", "Bi", BigDecimal.valueOf(1_000_000_000));
+> ```
+> `MIL`/`MILHOES`/`BILHOES` já batiam com as chaves existentes (case-insensitive), mas
+> `"Real/Efetivo"` (o ×1 do Endpoint) **não tinha entrada nenhuma** — caía em "unidade
+> desconhecida" (`R-FXA-009`, ramo `D`), perdendo a faixa no BUSCAR mesmo com valor e
+> unidade válidos. Achado ao investigar por que um valor do Endpoint aparecia com
+> ordem de grandeza errada na tela — o fixture de teste (`mocks/gerar_fixtures.py`,
+> Caso 12) usava `"Unitário"`/`codigo 3`, que não existe no enum real (`3` é
+> `BILHOES`, não `REAL`); corrigido pra `codigo 0`/`"Real/Efetivo"`, batendo com o
+> enum de verdade. O `abreviacao` do enum (`"Re"`/`"M "`/`"MM"`/`"Bi"`) não é
+> consumido — só `descricao` (`domain/eleicao.py::_descricao`).
+> ⚠️ Mesma lacuna existia no front (`faturamento.service.ts::multiplicadorUnidade`) —
+> corrigida junto.
 
 ---
 
@@ -5151,7 +5180,7 @@ flowchart TD
 
 ## 22. Índice de navegação
 
-**433 regras** catalogadas em 21 áreas, com **120 diagramas** Mermaid.
+**434 regras** catalogadas em 21 áreas, com **120 diagramas** Mermaid.
 
 ### 22.1 Por área
 
@@ -5168,7 +5197,7 @@ flowchart TD
 | [9](#9-r-prm--regras-do-serviço-de-parâmetros-catálogo-gate-e-cache) | `R-PRM` — Parâmetros/cache | 20 | `adapters/parametros.py` |
 | [10](#10-r-dyn--regras-de-persistência-dynamodb) | `R-DYN` — Persistência | 21 | `adapters/repository.py` |
 | [11](#11-r-mod--regras-do-modelo-de-domínio-domainmodelspy) | `R-MOD` — Modelo/defaults | 58 | `domain/models.py` |
-| [12](#12-r-fxa--regras-de-faixa-de-para-valor--faixa) | `R-FXA` — Faixa | 8 | `domain/faixa.py` |
+| [12](#12-r-fxa--regras-de-faixa-de-para-valor--faixa) | `R-FXA` — Faixa | 9 | `domain/faixa.py` |
 | [13](#13-r-div--regras-do-gate-de-divergência) | `R-DIV` — Divergência | 11 | `domain/divergencia.py` |
 | [14](#14-r-ele--regras-de-eleição-do-melhor-balanço-cascata-r1--r2--r3) | `R-ELE` — Eleição R1/R2/R3 | 35 | `domain/eleicao.py` |
 | [15](#15-r-pag--regras-de-seleção-de-alvos-matriz--subgrupos-sem-paginação) | `R-PAG` — Seleção de alvos (sem paginação) | 4 | `domain/paginacao.py` |

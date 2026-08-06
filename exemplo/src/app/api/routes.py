@@ -2,6 +2,7 @@
   - POST /faturamento/{documento}                    → repassar salvar (API interna)
   - GET  /faturamento/{documento}                     → repassar buscar (API interna)
   - GET  /conglomerados/{documento}/subgrupos         → repassar buscar (API interna)
+  - GET  /grupos-economicos?documento=                → repassar busca "like" (API interna, autocomplete)
   - GET  /catalogo                                    → faixas + moedas (do parametros) para fronte-end
 """
 from __future__ import annotations
@@ -182,6 +183,30 @@ async def forward_subgrupos(request: Request, documento: DocumentoPath) -> Respo
         documento=documento,
         internal_path=f"/conglomerados/{documento}/subgrupos",
         operation="listar_subgrupos",
+        method="GET",
+    )
+
+
+@router.get(
+    "/grupos-economicos",
+    status_code=status.HTTP_200_OK,
+    summary="Buscar grupos econômicos (autocomplete)",
+    description="Repassa requisicao para a API interna de busca parcial ('like') por documento — usado pelo autocomplete do front, antes de escolher o documento exato pra buscar faturamento.",
+    tags=["Conglomerados"],
+    response_description="Lista de grupos econômicos (cabeça + subgrupos) que batem com o documento parcial",
+)
+async def forward_grupos_economicos(request: Request, documento: str = "") -> Response:
+    """Forward GET para API interna de busca "like" de grupos econômicos.
+
+    `documento` só entra na assinatura pra virar contexto de log (`bind_context`) — o
+    valor real repassado pra API interna é a querystring inteira da requisição original
+    (`request.url.query`, resolvido dentro de `_forward`), igual às outras rotas GET.
+    """
+    return await _forward(
+        request=request,
+        documento=documento,
+        internal_path="/grupos-economicos",
+        operation="buscar_grupos_economicos",
         method="GET",
     )
 

@@ -31,7 +31,7 @@
 | | |
 |---|---|
 | **Doc do PO** | Premissas + RN02: *"buscar CNPJs, ID grupo ou digitar o nome da empresa"*; *"A funcionalidade de busca tem que estar preparada para pesquisar ambos os cenários"* |
-| **Código hoje** | `api/validacao.py` → `DOCUMENTO_PATTERN = ^\d+$` — aceita qualquer sequência de **dígitos**, sem faixa de tamanho fixa. Qualquer letra devolve **422**. `adapters/nj6.py` chama o NJ6 apenas com `?codigo_identificacao_pessoa={documento}` |
+| **Código hoje** | `api/validacao.py` → `DOCUMENTO_PATTERN = ^\d+$` — aceita qualquer sequência de **dígitos**, sem faixa de tamanho fixa. Qualquer letra devolve **422**. `adapters/nj6.py` chama o NJ6 apenas com `?codigo_tipo_pessoa=J&indicador_estrangeiro=0&documento={documento}` |
 | **Impacto** | Dois dos três modos de busca prometidos **não existem**. Não é ajuste de regex: buscar por nome exige um endpoint/parâmetro do NJ6 que hoje não usamos, e "ID grupo" não está mapeado em lugar nenhum |
 
 Nota: o NJ6 devolve um campo `codigo_grupo_cliente_atacado` nos subgrupos —

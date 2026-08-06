@@ -30,14 +30,27 @@ _LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 # Contexto da invocação (request_id e o que mais for vinculado), propagado sem passar à mão.
 _context: ContextVar[dict] = ContextVar("log_context", default={})
 
+_bff_correlation_id: ContextVar[str | None] = ContextVar("bff_correlation_id", default=None)
+
 
 def bind_context(**fields: Any) -> None:
     """Adiciona campos ao contexto desta invocação (todos os logs seguintes os carregam)."""
     _context.set({**_context.get(), **{k: v for k, v in fields.items() if v is not None}})
 
 
+def set_bff_correlation_id(correlation_id: str | None) -> None:
+    """Define o correlation ID vindo do BFF (x-itau-correlationid header)."""
+    _bff_correlation_id.set(correlation_id)
+
+
+def get_bff_correlation_id() -> str | None:
+    """Obtém o correlation ID do BFF, se houver sido definido."""
+    return _bff_correlation_id.get()
+
+
 def clear_context() -> None:
     _context.set({})
+    _bff_correlation_id.set(None)
 
 
 def _dd_trace_ids() -> dict:
