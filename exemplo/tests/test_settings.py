@@ -73,8 +73,14 @@ class TestValoresPadrao:
         assert settings.quickconfig_ttl_s == 300
         assert settings.quickconfig_key_faixas == "catalogo-faixas"
         assert settings.quickconfig_key_moedas == "catalogo-moedas"
+        assert settings.itau_api_key == ""
 
     def test_integ_timeout_s_aceita_override_por_env(self, monkeypatch):
         monkeypatch.setenv("INTEG_TIMEOUT_S", "5.5")
         settings = Settings(**_AUTH_KWARGS, api_dns="x.com")
         assert settings.integ_timeout_s == 5.5
+
+    def test_itau_api_key_aceita_override_por_env(self, monkeypatch):
+        monkeypatch.setenv("ITAU_API_KEY", "chave-real")
+        settings = Settings(**_AUTH_KWARGS, api_dns="x.com")
+        assert settings.itau_api_key == "chave-real"

@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app.api.deps import get_parametros
-from app.api.routes import _CONTENT_TYPE_JSON, _EXCLUDED_HEADERS, _filter_headers, router
+from app.api.routes import _CONTENT_TYPE_JSON, _montar_headers_downstream, router
 
 
 @pytest.fixture
@@ -24,58 +24,50 @@ def client(app):
     return TestClient(app, raise_server_exceptions=False)
 
 
-class TestFilterHeaders:
-    def test_filtra_host(self):
-        result = _filter_headers({"host": "example.com", "authorization": "Bearer token"})
-        assert "host" not in result
-        assert "authorization" in result
+class _FakeRequest:
+    """Stub mínimo — só o que `_montar_headers_downstream` usa (`request.headers.get`)."""
 
-    def test_filtra_content_length(self):
-        result = _filter_headers({"content-length": "100", "accept": "application/json"})
-        assert "content-length" not in result
-        assert "accept" in result
+    def __init__(self, headers: dict | None = None):
+        self.headers = headers or {}
 
-    def test_filtra_connection(self):
-        result = _filter_headers({"connection": "keep-alive", "user-agent": "test"})
-        assert "connection" not in result
-        assert "user-agent" in result
 
-    def test_filtra_transfer_encoding(self):
-        result = _filter_headers({"transfer-encoding": "chunked", "content-type": "text/plain"})
-        assert "transfer-encoding" not in result
-        assert "content-type" in result
+class TestMontarHeadersDownstream:
+    """Headers curados repassados pra API interna — mesmo conjunto em GET e POST."""
 
-    def test_preserva_headers_validos(self):
-        headers = {
-            "authorization": "Bearer token",
-            "content-type": "application/json",
-            "x-custom-header": "value",
-        }
-        assert _filter_headers(headers) == headers
+    def test_sempre_inclui_correlation_id_gerado_novo_a_cada_chamada(self):
+        h1 = _montar_headers_downstream(_FakeRequest())
+        h2 = _montar_headers_downstream(_FakeRequest())
+        assert "x-itau-correlationid" in h1
+        assert h1["x-itau-correlationid"] != h2["x-itau-correlationid"]
 
-    def test_case_insensitive(self):
-        result = _filter_headers({"HOST": "example.com", "Content-Length": "100"})
-        assert "HOST" not in result
-        assert "Content-Length" not in result
+    def test_apikey_vem_da_config_do_bff(self, monkeypatch):
+        monkeypatch.setattr("app.api.routes.settings.itau_api_key", "chave-teste")
+        headers = _montar_headers_downstream(_FakeRequest())
+        assert headers["x-itau-apikey"] == "chave-teste"
 
-    def test_vazio(self):
-        assert _filter_headers({}) == {}
+    def test_repassa_x_racf_se_presente(self):
+        headers = _montar_headers_downstream(_FakeRequest({"x-racf": "user123"}))
+        assert headers["x-racf"] == "user123"
 
-    def test_proxy_headers(self):
-        headers = {
-            "proxy-authenticate": "Basic",
-            "proxy-authorization": "Bearer token",
-            "authorization": "Bearer user-token",
-        }
-        result = _filter_headers(headers)
-        assert "proxy-authenticate" not in result
-        assert "proxy-authorization" not in result
-        assert "authorization" in result
+    def test_omite_x_racf_se_ausente(self):
+        headers = _montar_headers_downstream(_FakeRequest({}))
+        assert "x-racf" not in headers
 
-    def test_upgrade_headers(self):
-        headers = {"upgrade": "websocket", "te": "trailers", "trailer": "x-checksum"}
-        result = _filter_headers(headers)
-        assert result == {}
+    def test_ignora_headers_hop_by_hop_e_nao_confia_em_apikey_do_caller(self, monkeypatch):
+        """Só x-racf é repassado do caller — apikey/correlation-id são sempre do BFF,
+        nunca aceitos da requisição original (o caller não deveria conseguir spoofar)."""
+        monkeypatch.setattr("app.api.routes.settings.itau_api_key", "chave-real")
+        headers = _montar_headers_downstream(
+            _FakeRequest({
+                "x-racf": "user123",
+                "connection": "keep-alive",
+                "x-itau-apikey": "spoofed",
+                "x-itau-correlationid": "spoofed-id",
+            })
+        )
+        assert "connection" not in headers
+        assert headers["x-itau-apikey"] == "chave-real"
+        assert headers["x-itau-correlationid"] != "spoofed-id"
 
 
 class TestForwardSalvar:
@@ -163,6 +155,18 @@ class TestForwardBuscar:
         client.get("/api/faturamento/12345678901?filtro=ativo")
         _, kwargs = mock_forward.call_args
         assert kwargs["query"] == "filtro=ativo"
+
+    @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
+    def test_repassa_x_racf_apikey_e_correlation_id_no_get(self, mock_forward, client):
+        """GET também precisa repassar x-racf/x-itau-apikey/x-itau-correlationid pra API
+        interna — antes dessa rota nenhum header ia junto em GET, só em POST."""
+        mock_forward.return_value = (200, "{}", "application/json")
+        client.get("/api/faturamento/12345678901", headers={"x-racf": "user123"})
+        _, kwargs = mock_forward.call_args
+        headers = kwargs["extra_headers"]
+        assert headers.get("x-racf") == "user123"
+        assert "x-itau-apikey" in headers
+        assert "x-itau-correlationid" in headers
 
     @patch("app.adapters.internal_api.forward", new_callable=AsyncMock)
     def test_trata_excecao(self, mock_forward, client):
@@ -269,11 +273,5 @@ class TestRouter:
 
 
 class TestConstantes:
-    def test_excluded_headers_contem_headers_necessarios(self):
-        assert {"host", "content-length", "connection", "transfer-encoding"} <= _EXCLUDED_HEADERS
-
     def test_content_type_json_correto(self):
         assert _CONTENT_TYPE_JSON == "application/json"
-
-    def test_excluded_headers_e_frozenset(self):
-        assert isinstance(_EXCLUDED_HEADERS, frozenset)

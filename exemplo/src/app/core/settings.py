@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     integ_timeout_s: float = 27.0
     cors_allow_origin: str = "*"
 
+    # Repassado à API interna em toda chamada (GET e POST) — mesma env var do lado da
+    # API interna (ver app/src/app/core/settings.py::itau_api_key), mas é o BFF quem
+    # efetivamente injeta esse header; não vem do caller.
+    itau_api_key: str = ""
+
     # QuickConfig - catálogo de parâmetros
     quickconfig_cluster_members: str = ""
     quickconfig_app_name: str = "Faturamento-irb-lambda"
