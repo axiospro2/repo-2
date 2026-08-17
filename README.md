@@ -132,4 +132,5 @@ docs/           # esta documentação (arquitetura, fluxos, avaliação de códi
 | [`RECONSTRUCAO.md`](RECONSTRUCAO.md) | Como este repositório foi reconstruído e seus gaps conhecidos |
 | [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md) | Componentes, classes de domínio, modelo de dados, infraestrutura |
 | [`docs/FLUXOS.md`](docs/FLUXOS.md) | Sequências SALVAR/BUSCAR, autenticação OAuth2, cascata R1/R2/R3 |
+| [`docs/POST_SALVAR.md`](docs/POST_SALVAR.md) | Contrato do `POST /faturamento/{documento}`: campos obrigatórios, cenários, exemplos de curl |
 | [`docs/AVALIACAO.md`](docs/AVALIACAO.md) | Avaliação de código: pontos fortes, bugs críticos, recomendações |

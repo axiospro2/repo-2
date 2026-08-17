@@ -188,14 +188,18 @@ O menor body que grava é bem menor que isso — só o obrigatório
       "semFaturamento": false,
       "origem": "BASE",
       "justificativa": "Faturamento informado seguindo a visão consolidada do grupo.",
-      "atualizadoEm": "2026-08-17T13:41:02+00:00"
+      "atualizadoEm": null
     }
   ]
 }
 ```
 
-> `nomeGrupoEconomico`, `segmento` e `faixaDescricao` vêm `null` no POST — são
-> enriquecidos só na leitura (NJ6 + catálogo). No GET eles vêm preenchidos.
+> **Campos `null` na resposta do POST**: `nomeGrupoEconomico`, `segmento` e
+> `faixaDescricao` são enriquecidos só na leitura (NJ6 + catálogo) — no GET vêm
+> preenchidos. E o `atualizadoEm` **de dentro do marcador** vem `null`: o `salvar` só
+> carimba o timestamp no agregado (`service.py::salvar` → `fat.atualizado_em`), não em
+> cada marcador. O exemplo do `app/api.yaml` mostra os dois preenchidos — nesse ponto
+> ele está otimista; use o timestamp da raiz.
 
 ---
 
@@ -314,8 +318,9 @@ Rode `todos` para executar a lista inteira em ordem.
 > mas isso só falha com as faixas do fixture de teste — no fallback real, `1` cai em
 > `ate_360_mil`.
 
-A ordem de validação importa quando falta mais de uma coisa: `subgrupoDoc` → valor/faixa →
-unidade → moeda. Um marcador sem `atual` nenhum falha em `FaixaObrigatoria`, não em moeda.
+A ordem de validação importa quando falta mais de uma coisa: `subgrupoDoc` → valor/faixa
+(e a unidade, quando há valor) → moeda. Um marcador sem `atual` nenhum falha em
+`FaixaObrigatoria`, não em moeda.
 
 ---
 
